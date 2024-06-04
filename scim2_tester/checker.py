@@ -1,4 +1,5 @@
 import argparse
+import uuid
 from dataclasses import dataclass
 from enum import Enum
 from enum import auto
@@ -154,6 +155,44 @@ def check_resource_types_endpoint(scim: SCIMClient) -> Tuple[Resource, CheckResu
     )
 
 
+def check_random_url(scim: SCIMClient) -> Tuple[Resource, CheckResult]:
+    """A request to a random URL should return a 404 Error object."""
+
+    probably_invalid_url = f"/{str(uuid.uuid4())}"
+    response = scim.query(url=probably_invalid_url)
+
+    if not isinstance(response, Error):
+        return (
+            response,
+            CheckResult(
+                status=Status.ERROR,
+                title=check_resource_types_endpoint.__name__,
+                description=check_resource_types_endpoint.__doc__,
+                reason=f"{probably_invalid_url} did not return an Error object",
+                data=response,
+            ),
+        )
+
+    if response.status != 404:
+        return (
+            response,
+            CheckResult(
+                status=Status.ERROR,
+                title=check_resource_types_endpoint.__name__,
+                description=check_resource_types_endpoint.__doc__,
+                reason=f"{probably_invalid_url} did return an object, but the status code is {response.status}",
+                data=response,
+            ),
+        )
+
+    return response, CheckResult(
+        status=Status.SUCCESS,
+        title=check_resource_types_endpoint.__name__,
+        description=check_resource_types_endpoint.__doc__,
+        reason=f"{probably_invalid_url} correctly returned a 404 error",
+    )
+
+
 def check_server(scim: SCIMClient) -> List[CheckResult]:
     """
     .. todo::
@@ -167,6 +206,8 @@ def check_server(scim: SCIMClient) -> List[CheckResult]:
     service_provider_config, result = check_schemas_endpoint(scim)
     results.append(result)
     service_provider_config, result = check_resource_types_endpoint(scim)
+    results.append(result)
+    service_provider_config, result = check_random_url(scim)
     results.append(result)
     return results
 
