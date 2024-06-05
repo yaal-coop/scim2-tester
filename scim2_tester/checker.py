@@ -47,7 +47,8 @@ def check_random_url(scim: SCIMClient) -> Tuple[Resource, CheckResult]:
     return CheckResult(
         status=Status.SUCCESS,
         reason=f"{probably_invalid_url} correctly returned a 404 error",
-    ), response
+        data=response,
+    )
 
 
 def check_server(scim: SCIMClient) -> List[CheckResult]:
@@ -62,11 +63,15 @@ def check_server(scim: SCIMClient) -> List[CheckResult]:
     results = []
 
     # Get the initial basic objects
-    result, service_provider_config = check_service_provider_config_endpoint(scim)
+    result = check_service_provider_config_endpoint(scim)
+    service_provider_config = result.data
     results.append(result)
-    result, schemas = check_schemas_endpoint(scim)
+
+    result = check_schemas_endpoint(scim)
     results.append(result)
-    result, resource_types = check_resource_types_endpoint(scim)
+
+    result = check_resource_types_endpoint(scim)
+    resource_types = result.data
     results.append(result)
 
     # Miscelleaneous checks

@@ -28,4 +28,4 @@ def check_service_provider_config_endpoint(
     except SCIMClientError as exc:
         return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
 
-    return CheckResult(status=Status.SUCCESS), response
+    return CheckResult(status=Status.SUCCESS, data=response)

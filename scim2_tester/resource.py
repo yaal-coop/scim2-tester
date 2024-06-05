@@ -95,7 +95,8 @@ def check_object_creation(
     return CheckResult(
         status=Status.SUCCESS,
         reason=f"Successfull creation of a {obj.__class__.__name__} object with id {response.id}",
-    ), response
+        data=response,
+    )
 
 
 @decorate_result
@@ -116,7 +117,8 @@ def check_object_query(scim: SCIMClient, obj: Resource) -> Tuple[Resource, Check
     return CheckResult(
         status=Status.SUCCESS,
         reason=f"Successfull query of a {obj.__class__.__name__} object with id {response.id}",
-    ), response
+        data=response,
+    )
 
 
 @decorate_result
@@ -143,12 +145,13 @@ def check_object_query_without_id(
             status=Status.ERROR,
             reason=f"Could not find object {obj.__class__.__name__} with id : {response.detail}",
             data=response,
-        ), None
+        )
 
     return CheckResult(
         status=Status.SUCCESS,
         reason=f"Successfull query of a {obj.__class__.__name__} object with id {obj.id}",
-    ), response
+        data=response,
+    )
 
 
 @decorate_result
@@ -171,7 +174,8 @@ def check_object_replacement(
     return CheckResult(
         status=Status.SUCCESS,
         reason=f"Successfull replacement of a {obj.__class__.__name__} object with id {response.id}",
-    ), response
+        data=response,
+    )
 
 
 @decorate_result
@@ -189,7 +193,7 @@ def check_object_deletion(
     return CheckResult(
         status=Status.SUCCESS,
         reason=f"Successfull deletion of a {obj.__class__.__name__} object with id {obj.id}",
-    ), None
+    )
 
 
 def check_resource_type(
@@ -209,21 +213,23 @@ def check_resource_type(
     obj = model()
     fill_with_random_values(obj)
 
-    result, created_obj = check_object_creation(scim, obj)
+    result = check_object_creation(scim, obj)
     results.append(result)
 
-    if created_obj:
-        result, queried_obj = check_object_query(scim, created_obj)
+    if result.status == Status.SUCCESS:
+        created_obj = result.data
+        result = check_object_query(scim, created_obj)
+        queried_obj = result.data
         results.append(result)
 
-        result, queried_obj = check_object_query_without_id(scim, created_obj)
+        result = check_object_query_without_id(scim, created_obj)
         results.append(result)
 
         fill_with_random_values(queried_obj)
-        result, queried_obj = check_object_replacement(scim, created_obj)
+        result = check_object_replacement(scim, created_obj)
         results.append(result)
 
-        result, _ = check_object_deletion(scim, created_obj)
+        result = check_object_deletion(scim, created_obj)
         results.append(result)
 
     return results

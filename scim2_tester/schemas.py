@@ -34,4 +34,5 @@ def check_schemas_endpoint(scim: SCIMClient) -> Tuple[Resource, CheckResult]:
     return CheckResult(
         status=Status.SUCCESS,
         reason=f"Schemas available are: {available}",
-    ), response.resources
+        data=response.resources,
+    )

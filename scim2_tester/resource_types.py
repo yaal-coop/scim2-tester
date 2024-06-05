@@ -32,4 +32,4 @@ def check_resource_types_endpoint(scim: SCIMClient) -> Tuple[Resource, CheckResu
 
     available = ", ".join([f"'{resource.name}'" for resource in response.resources])
     reason = f"Resource types available are: {available}"
-    return CheckResult(status=Status.SUCCESS, reason=reason), response.resources
+    return CheckResult(status=Status.SUCCESS, reason=reason, data=response.resources)
