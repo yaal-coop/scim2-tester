@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Added
+^^^^^
+- Basic checks: :class:`~scim2_models.ServiceProviderConfig`,
+  :class:`~scim2_models.Schema` and :class:`~scim2_models.ResourceType` retrieval and
+  creation, query, replacement and deletion operations on :class:`~scim2_models.User`
+  and :class:`~scim2_models.Group`.
+
 [0.1.0] - 2024-06-03
 --------------------
 

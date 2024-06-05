@@ -1,8 +1,7 @@
 from typing import Tuple
 
-from httpx import HTTPError
 from scim2_client import SCIMClient
-from scim2_models import Error
+from scim2_client import SCIMClientError
 from scim2_models import Resource
 from scim2_models import ResourceType
 
@@ -26,12 +25,10 @@ def check_resource_types_endpoint(scim: SCIMClient) -> Tuple[Resource, CheckResu
     """
 
     try:
-        response = scim.query(ResourceType)
-    except HTTPError as exc:
-        return CheckResult(status=Status.ERROR, reason=str(exc)), None
+        response = scim.query(ResourceType, raise_scim_errors=True)
 
-    if isinstance(response, Error):
-        return CheckResult(status=Status.ERROR, reason=response.detail), response
+    except SCIMClientError as exc:
+        return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
 
     available = ", ".join([f"'{resource.name}'" for resource in response.resources])
     reason = f"Resource types available are: {available}"

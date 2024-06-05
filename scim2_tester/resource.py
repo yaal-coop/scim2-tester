@@ -4,13 +4,11 @@ from enum import Enum
 from typing import List
 from typing import Tuple
 
-from httpx import HTTPError
 from pydantic import AnyUrl
 from pydantic import EmailStr
 from scim2_client import SCIMClient
-from scim2_client import SCIMResponseError
+from scim2_client import SCIMClientError
 from scim2_models import ComplexAttribute
-from scim2_models import Error
 from scim2_models import Group
 from scim2_models import Meta
 from scim2_models import Resource
@@ -89,31 +87,109 @@ def check_object_creation(
     """
 
     try:
-        response = scim.create(obj)
-    except HTTPError as exc:
-        return CheckResult(
-            status=Status.ERROR,
-            reason=str(exc),
-        ), None
+        response = scim.create(obj, raise_scim_errors=True)
 
-    except SCIMResponseError as exc:
-        return CheckResult(
-            status=Status.ERROR,
-            reason=f"Object creation did not return an {obj.__class__.__name__} object: {exc}",
-            data=exc.response.content,
-        ), None
-
-    if isinstance(response, Error):
-        return CheckResult(
-            status=Status.ERROR,
-            reason=f"Object creation returned an Error object: {response.detail}",
-            data=response,
-        ), None
+    except SCIMClientError as exc:
+        return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
 
     return CheckResult(
         status=Status.SUCCESS,
         reason=f"Successfull creation of a {obj.__class__.__name__} object with id {response.id}",
     ), response
+
+
+@decorate_result
+def check_object_query(scim: SCIMClient, obj: Resource) -> Tuple[Resource, CheckResult]:
+    """Perform an object query by knowing its id.
+
+    TODO:
+      - check if the fields of the result object are the same than the
+      fields of the request object
+    """
+
+    try:
+        response = scim.query(obj.__class__, obj.id, raise_scim_errors=True)
+
+    except SCIMClientError as exc:
+        return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
+
+    return CheckResult(
+        status=Status.SUCCESS,
+        reason=f"Successfull query of a {obj.__class__.__name__} object with id {response.id}",
+    ), response
+
+
+@decorate_result
+def check_object_query_without_id(
+    scim: SCIMClient, obj: Resource
+) -> Tuple[Resource, CheckResult]:
+    """Perform an object creation.
+
+    TODO:
+      - look for the object across several pages
+      - check if the fields of the result object are the same than the
+      fields of the request object
+    """
+
+    try:
+        response = scim.query(obj.__class__, raise_scim_errors=True)
+
+    except SCIMClientError as exc:
+        return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
+
+    found = any(obj.id == resource.id for resource in response.resources)
+    if not found:
+        return CheckResult(
+            status=Status.ERROR,
+            reason=f"Could not find object {obj.__class__.__name__} with id : {response.detail}",
+            data=response,
+        ), None
+
+    return CheckResult(
+        status=Status.SUCCESS,
+        reason=f"Successfull query of a {obj.__class__.__name__} object with id {obj.id}",
+    ), response
+
+
+@decorate_result
+def check_object_replacement(
+    scim: SCIMClient, obj: Resource
+) -> Tuple[Resource, CheckResult]:
+    """Perform an object replacement.
+
+    TODO:
+      - check if the fields of the result object are the same than the
+      fields of the request object
+    """
+
+    try:
+        response = scim.replace(obj, raise_scim_errors=True)
+
+    except SCIMClientError as exc:
+        return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
+
+    return CheckResult(
+        status=Status.SUCCESS,
+        reason=f"Successfull replacement of a {obj.__class__.__name__} object with id {response.id}",
+    ), response
+
+
+@decorate_result
+def check_object_deletion(
+    scim: SCIMClient, obj: Resource
+) -> Tuple[Resource, CheckResult]:
+    """Perform an object deletion."""
+
+    try:
+        scim.delete(obj.__class__, obj.id, raise_scim_errors=True)
+
+    except SCIMClientError as exc:
+        return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
+
+    return CheckResult(
+        status=Status.SUCCESS,
+        reason=f"Successfull deletion of a {obj.__class__.__name__} object with id {obj.id}",
+    ), None
 
 
 def check_resource_type(
@@ -124,11 +200,8 @@ def check_resource_type(
     """
     TODO:
 
-    - Check creation
-    - Check query
-    - Check query all
-    - Check replace
-    - Check delete
+    - Make a 'skip' status
+    - Check search
     """
     results = []
 
@@ -138,5 +211,19 @@ def check_resource_type(
 
     result, created_obj = check_object_creation(scim, obj)
     results.append(result)
+
+    if created_obj:
+        result, queried_obj = check_object_query(scim, created_obj)
+        results.append(result)
+
+        result, queried_obj = check_object_query_without_id(scim, created_obj)
+        results.append(result)
+
+        fill_with_random_values(queried_obj)
+        result, queried_obj = check_object_replacement(scim, created_obj)
+        results.append(result)
+
+        result, _ = check_object_deletion(scim, created_obj)
+        results.append(result)
 
     return results

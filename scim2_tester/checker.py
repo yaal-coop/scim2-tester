@@ -3,7 +3,6 @@ import uuid
 from typing import List
 from typing import Tuple
 
-from httpx import HTTPError
 from scim2_client import SCIMClient
 from scim2_client import SCIMClientError
 from scim2_models import Error
@@ -27,18 +26,9 @@ def check_random_url(scim: SCIMClient) -> Tuple[Resource, CheckResult]:
     probably_invalid_url = f"/{str(uuid.uuid4())}"
     try:
         response = scim.query(url=probably_invalid_url)
-    except HTTPError as exc:
-        return CheckResult(
-            status=Status.ERROR,
-            reason=str(exc),
-        )
 
     except SCIMClientError as exc:
-        return CheckResult(
-            status=Status.ERROR,
-            reason=f"{probably_invalid_url} did not return an Error object",
-            data=exc.response.content,
-        )
+        return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
 
     if not isinstance(response, Error):
         return CheckResult(
@@ -61,7 +51,13 @@ def check_random_url(scim: SCIMClient) -> Tuple[Resource, CheckResult]:
 
 
 def check_server(scim: SCIMClient) -> List[CheckResult]:
-    """Perform a series of check to a SCIM server."""
+    """Perform a series of check to a SCIM server.
+
+    It starts by retrieving the standard :class:`~scim2_models.ServiceProviderConfig`,
+    :class:`~scim2_models.Schema` and :class:`~scim2_models.ResourceType` endpoints.
+
+    Then for all discovered resources, it perform a series of creation, query, replacement and deletion.
+    """
 
     results = []
 
@@ -99,13 +95,7 @@ if __name__ == "__main__":
         base_url=args.host,
         headers={"Authorization": f"Bearer {args.token}"} if args.token else None,
     )
-    scim = SCIMClient(
-        client,
-        resource_types=(
-            User,
-            Group,
-        ),
-    )
+    scim = SCIMClient(client, resource_types=(User, Group))
     results = check_server(scim)
     for result in results:
         print(result.status.name, result.title)

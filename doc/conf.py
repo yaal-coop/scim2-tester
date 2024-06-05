@@ -17,6 +17,8 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx.ext.viewcode",
     "sphinx_click",
+    "sphinxcontrib.autodoc_pydantic",
+    "myst_parser",
 ]
 
 templates_path = ["_templates"]
