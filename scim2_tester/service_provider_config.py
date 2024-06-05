@@ -4,9 +4,10 @@ from scim2_client import SCIMClient
 from scim2_client import SCIMClientError
 from scim2_models import Resource
 from scim2_models import ServiceProviderConfig
-from utils import CheckResult
-from utils import Status
-from utils import decorate_result
+
+from .utils import CheckResult
+from .utils import Status
+from .utils import decorate_result
 
 
 @decorate_result
