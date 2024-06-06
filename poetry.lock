@@ -737,13 +737,13 @@ typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
 
 [[package]]
 name = "pydantic-settings"
-version = "2.3.0"
+version = "2.3.1"
 description = "Settings management using Pydantic"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pydantic_settings-2.3.0-py3-none-any.whl", hash = "sha256:26eeed27370a9c5e3f64e4a7d6602573cbedf05ed940f1d5b11c3f178427af7a"},
-    {file = "pydantic_settings-2.3.0.tar.gz", hash = "sha256:78db28855a71503cfe47f39500a1dece523c640afd5280edb5c5c9c9cfa534c9"},
+    {file = "pydantic_settings-2.3.1-py3-none-any.whl", hash = "sha256:acb2c213140dfff9669f4fe9f8180d43914f51626db28ab2db7308a576cce51a"},
+    {file = "pydantic_settings-2.3.1.tar.gz", hash = "sha256:e34bbd649803a6bb3e2f0f58fb0edff1f0c7f556849fda106cc21bcce12c30ab"},
 ]
 
 [package.dependencies]
@@ -962,13 +962,13 @@ scim2-models = ">=0.1.5,<0.2.0"
 
 [[package]]
 name = "scim2-models"
-version = "0.1.5"
+version = "0.1.6"
 description = "SCIM2 models serialization and validation with pydantic"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "scim2_models-0.1.5-py3-none-any.whl", hash = "sha256:afa0d0f3334474cf24e7b5df8548b5e5babd2bfac6981e2c55ba414e7c9e9dfd"},
-    {file = "scim2_models-0.1.5.tar.gz", hash = "sha256:823f5403983909611eb946e3ba46de35cb41acff30467e5ab557283988062a8a"},
+    {file = "scim2_models-0.1.6-py3-none-any.whl", hash = "sha256:a945c1a17b90c853011f8dc35eb0ee1e1a1642e215049fa0079f54898db2d8d3"},
+    {file = "scim2_models-0.1.6.tar.gz", hash = "sha256:7ccb7f163d8d12c5a63b629498bac62923d0962905fc3bba0cc5cce24bcf36a9"},
 ]
 
 [package.dependencies]
