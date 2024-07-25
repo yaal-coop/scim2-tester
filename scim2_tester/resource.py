@@ -3,14 +3,15 @@ import uuid
 from enum import Enum
 from typing import List
 from typing import Tuple
+from typing import get_origin
 
-from pydantic import AnyUrl
 from pydantic import EmailStr
 from scim2_client import SCIMClient
 from scim2_client import SCIMClientError
 from scim2_models import ComplexAttribute
 from scim2_models import Group
 from scim2_models import Meta
+from scim2_models import Reference
 from scim2_models import Resource
 from scim2_models import ResourceType
 from scim2_models import ServiceProviderConfig
@@ -49,8 +50,8 @@ def fill_with_random_values(obj) -> Resource:
         elif field_type is bool:
             value = random.choice([True, False])
 
-        elif field_type is AnyUrl:
-            value = AnyUrl(f"https://{str(uuid.uuid4())}.test")
+        elif get_origin(field_type) is Reference:
+            value = f"https://{str(uuid.uuid4())}.test"
 
         elif field_type is EmailStr:
             # pydantic won't allow to use the 'test' TLD here

@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[0.1.3] - Unreleased
+--------------------
+
+Fixed
+^^^^^
+- Bug with the new :class:`~scim2_models.Reference` attribute type.
+
 [0.1.2] - 2024-06-05
 --------------------
 
