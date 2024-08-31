@@ -94,6 +94,7 @@ if __name__ == "__main__":
     parser.add_argument("host")
     parser.add_argument("--token", required=False)
     parser.add_argument("--verbose", required=False, action="store_true")
+    parser.add_argument("--no-color", required=False, action="store_true")
     args = parser.parse_args()
 
     client = Client(
@@ -103,7 +104,7 @@ if __name__ == "__main__":
     scim = SCIMClient(client, resource_types=(User, Group))
     results = check_server(scim)
     for result in results:
-        print(result.status.name, result.title)
+        print(result.format_status(args.no_color), result.title)
         if result.reason:
             print("  ", result.reason)
             if args.verbose and result.data:

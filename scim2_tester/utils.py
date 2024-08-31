@@ -10,6 +10,13 @@ class Status(Enum):
     SUCCESS = auto()
     ERROR = auto()
 
+_color_by_status = {
+    # Green for success
+    Status.SUCCESS: "\033[32m",
+    # Red for error
+    Status.ERROR: "\033[31m",
+}
+
 
 @dataclass
 class CheckResult:
@@ -28,6 +35,11 @@ class CheckResult:
 
     data: Optional[Any] = None
     """Any related data that can help to debug."""
+
+    def format_status(self, no_color: bool = False):
+        if no_color:
+            return self.status.name
+        return f"{_color_by_status[self.status]}{self.status.name}\033[0m"
 
 
 def decorate_result(func):
