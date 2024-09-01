@@ -25,7 +25,7 @@ def check_random_url(scim: SCIMClient) -> Tuple[Resource, CheckResult]:
 
     probably_invalid_url = f"/{str(uuid.uuid4())}"
     try:
-        response = scim.query(url=probably_invalid_url)
+        response = scim.query(url=probably_invalid_url, raise_scim_errors=False)
 
     except SCIMClientError as exc:
         return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)

@@ -6,6 +6,7 @@ from scim2_models import Error
 from scim2_models import Group
 from scim2_models import User
 
+from scim2_tester.checker import check_schemas_endpoint
 from scim2_tester.checker import check_server
 from scim2_tester.utils import Status
 
@@ -34,11 +35,10 @@ def test_bad_authentication(httpserver):
 
     client = Client(base_url=f"http://localhost:{httpserver.port}")
     scim = SCIMClient(client, resource_types=(User, Group))
-    results = check_server(scim)
+    result = check_schemas_endpoint(scim)
 
-    assert all(result.status == Status.ERROR for result in results)
-    assert all(
+    assert result.status == Status.ERROR
+    assert (
         result.reason
         == "The server returned a SCIM Error object: Authentication is needed"
-        for result in results
     )

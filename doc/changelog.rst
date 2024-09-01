@@ -1,6 +1,10 @@
 Changelog
 =========
 
+Fixed
+^^^^^
+- check_random_url error after scim2-client 0.2.0 update. #8
+
 [0.1.4] - 2024-09-01
 --------------------
 
