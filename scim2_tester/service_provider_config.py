@@ -24,7 +24,7 @@ def check_service_provider_config_endpoint(
     """
 
     try:
-        response = scim.query(ServiceProviderConfig, raise_scim_errors=True)
+        response = scim.query(ServiceProviderConfig)
     except SCIMClientError as exc:
         return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
 

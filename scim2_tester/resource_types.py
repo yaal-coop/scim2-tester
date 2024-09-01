@@ -25,7 +25,7 @@ def check_resource_types_endpoint(scim: SCIMClient) -> Tuple[Resource, CheckResu
     """
 
     try:
-        response = scim.query(ResourceType, raise_scim_errors=True)
+        response = scim.query(ResourceType)
 
     except SCIMClientError as exc:
         return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)

@@ -25,7 +25,7 @@ def check_schemas_endpoint(scim: SCIMClient) -> Tuple[Resource, CheckResult]:
     """
 
     try:
-        response = scim.query(Schema, raise_scim_errors=True)
+        response = scim.query(Schema)
 
     except SCIMClientError as exc:
         return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)

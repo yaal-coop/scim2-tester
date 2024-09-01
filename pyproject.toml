@@ -26,7 +26,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
-scim2-client = "^0.1.9"
+scim2-client = "^0.2.0"
 
 [tool.poetry.group.doc]
 optional = true

@@ -88,7 +88,7 @@ def check_object_creation(
     """
 
     try:
-        response = scim.create(obj, raise_scim_errors=True)
+        response = scim.create(obj)
 
     except SCIMClientError as exc:
         return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
@@ -110,7 +110,7 @@ def check_object_query(scim: SCIMClient, obj: Resource) -> Tuple[Resource, Check
     """
 
     try:
-        response = scim.query(obj.__class__, obj.id, raise_scim_errors=True)
+        response = scim.query(obj.__class__, obj.id)
 
     except SCIMClientError as exc:
         return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
@@ -135,7 +135,7 @@ def check_object_query_without_id(
     """
 
     try:
-        response = scim.query(obj.__class__, raise_scim_errors=True)
+        response = scim.query(obj.__class__)
 
     except SCIMClientError as exc:
         return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
@@ -167,7 +167,7 @@ def check_object_replacement(
     """
 
     try:
-        response = scim.replace(obj, raise_scim_errors=True)
+        response = scim.replace(obj)
 
     except SCIMClientError as exc:
         return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
@@ -186,7 +186,7 @@ def check_object_deletion(
     """Perform an object deletion."""
 
     try:
-        scim.delete(obj.__class__, obj.id, raise_scim_errors=True)
+        scim.delete(obj.__class__, obj.id)
 
     except SCIMClientError as exc:
         return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)

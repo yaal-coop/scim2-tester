@@ -984,13 +984,13 @@ use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "scim2-client"
-version = "0.1.11"
+version = "0.2.0"
 description = "Pythonically build SCIM requests and parse SCIM responses"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "scim2_client-0.1.11-py3-none-any.whl", hash = "sha256:4c43e785f03103f9f6d22d5ab7308434ba991295bbf07c62a6dc49bf7cd7410b"},
-    {file = "scim2_client-0.1.11.tar.gz", hash = "sha256:8377c955bc009c98fa8b0b94df5d73e0db5c0f8cb3e318206e6ae70749a92eec"},
+    {file = "scim2_client-0.2.0-py3-none-any.whl", hash = "sha256:5c60c98cf300f77dc6150f4535d194368e572d738d0f8364eecf04664771758b"},
+    {file = "scim2_client-0.2.0.tar.gz", hash = "sha256:a813e9a531b0aaade4d62a3d79eab5fbe6e2462228c771e8b5fdbaef4270ab50"},
 ]
 
 [package.dependencies]
@@ -1251,4 +1251,4 @@ watchdog = ["watchdog (>=2.3)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "901c686f6e60080a979dd832f0e047dbb81c9998ac8470fb7f4e34557c25e9c5"
+content-hash = "7208a252085f52409bcca0cc5b1ae7af75501b032f52c7d98dff3a94f67c1669"
