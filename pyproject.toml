@@ -24,6 +24,10 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[tool.poetry.urls]
+changelog = "https://scim2-tester.readthedocs.io/en/latest/changelog.html"
+funding = "https://github.com/sponsors/yaal-coop"
+
 [tool.poetry.dependencies]
 python = "^3.10"
 scim2-client = "^0.2.0"
