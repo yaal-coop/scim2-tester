@@ -63,26 +63,27 @@ def check_server(scim: SCIMClient) -> List[CheckResult]:
     results = []
 
     # Get the initial basic objects
-    result = check_service_provider_config_endpoint(scim)
-    service_provider_config = result.data
-    results.append(result)
+    result_spc = check_service_provider_config_endpoint(scim)
+    service_provider_config = result_spc.data
+    results.append(result_spc)
 
-    result = check_schemas_endpoint(scim)
-    results.append(result)
+    result_schemas = check_schemas_endpoint(scim)
+    results.append(result_schemas)
 
-    result = check_resource_types_endpoint(scim)
-    resource_types = result.data
-    results.append(result)
+    result_resource_types = check_resource_types_endpoint(scim)
+    resource_types = result_resource_types.data
+    results.append(result_resource_types)
 
     # Miscelleaneous checks
-    result = check_random_url(scim)
-    results.append(result)
+    result_random = check_random_url(scim)
+    results.append(result_random)
 
     # Resource checks
-    for resource_type in resource_types or []:
-        results.extend(
-            check_resource_type(scim, resource_type, service_provider_config)
-        )
+    if result_resource_types.status == Status.SUCCESS:
+        for resource_type in resource_types:
+            results.extend(
+                check_resource_type(scim, resource_type, service_provider_config)
+            )
 
     return results
 
