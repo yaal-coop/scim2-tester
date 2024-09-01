@@ -79,7 +79,7 @@ def check_server(scim: SCIMClient) -> List[CheckResult]:
     results.append(result)
 
     # Resource checks
-    for resource_type in resource_types:
+    for resource_type in resource_types or []:
         results.extend(
             check_resource_type(scim, resource_type, service_provider_config)
         )
