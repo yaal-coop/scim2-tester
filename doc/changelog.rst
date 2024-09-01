@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[0.1.4] - Unreleased
+--------------------
+
+Fixed
+^^^^^
+- Invalid domains and network errors are properly handled. #6
+
 [0.1.3] - 2024-07-25
 --------------------
 
