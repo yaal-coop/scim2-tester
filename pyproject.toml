@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "scim2-tester"
-version = "0.1.4"
+version = "0.1.5"
 description = " Check SCIM RFCs server compliance"
 authors = ["Yaal Coop <contact@yaal.coop>"]
 license = "MIT"
