@@ -95,7 +95,7 @@ def check_object_creation(
 
     return CheckResult(
         status=Status.SUCCESS,
-        reason=f"Successfull creation of a {obj.__class__.__name__} object with id {response.id}",
+        reason=f"Successful creation of a {obj.__class__.__name__} object with id {response.id}",
         data=response,
     )
 
@@ -117,7 +117,7 @@ def check_object_query(scim: SCIMClient, obj: Resource) -> Tuple[Resource, Check
 
     return CheckResult(
         status=Status.SUCCESS,
-        reason=f"Successfull query of a {obj.__class__.__name__} object with id {response.id}",
+        reason=f"Successful query of a {obj.__class__.__name__} object with id {response.id}",
         data=response,
     )
 
@@ -150,7 +150,7 @@ def check_object_query_without_id(
 
     return CheckResult(
         status=Status.SUCCESS,
-        reason=f"Successfull query of a {obj.__class__.__name__} object with id {obj.id}",
+        reason=f"Successful query of a {obj.__class__.__name__} object with id {obj.id}",
         data=response,
     )
 
@@ -174,7 +174,7 @@ def check_object_replacement(
 
     return CheckResult(
         status=Status.SUCCESS,
-        reason=f"Successfull replacement of a {obj.__class__.__name__} object with id {response.id}",
+        reason=f"Successful replacement of a {obj.__class__.__name__} object with id {response.id}",
         data=response,
     )
 
@@ -193,7 +193,7 @@ def check_object_deletion(
 
     return CheckResult(
         status=Status.SUCCESS,
-        reason=f"Successfull deletion of a {obj.__class__.__name__} object with id {obj.id}",
+        reason=f"Successful deletion of a {obj.__class__.__name__} object with id {obj.id}",
     )
 
 
