@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from enum import Enum
 from enum import auto
 from typing import Any
-from typing import Optional
 
 
 class Status(Enum):
@@ -17,16 +16,16 @@ class CheckResult:
 
     status: Status
 
-    title: Optional[str] = None
+    title: str | None = None
     """The title of the check."""
 
-    description: Optional[str] = None
+    description: str | None = None
     """What the check does, and why the spec advises it to do."""
 
-    reason: Optional[str] = None
+    reason: str | None = None
     """Why it failed, or how it succeed."""
 
-    data: Optional[Any] = None
+    data: Any | None = None
     """Any related data that can help to debug."""
 
 

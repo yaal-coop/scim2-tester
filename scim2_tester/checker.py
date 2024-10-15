@@ -1,7 +1,5 @@
 import argparse
 import uuid
-from typing import List
-from typing import Tuple
 
 from scim2_client import SCIMClient
 from scim2_client import SCIMClientError
@@ -20,7 +18,7 @@ from scim2_tester.utils import decorate_result
 
 
 @decorate_result
-def check_random_url(scim: SCIMClient) -> Tuple[Resource, CheckResult]:
+def check_random_url(scim: SCIMClient) -> tuple[Resource, CheckResult]:
     """A request to a random URL should return a 404 Error object."""
 
     probably_invalid_url = f"/{str(uuid.uuid4())}"
@@ -51,7 +49,7 @@ def check_random_url(scim: SCIMClient) -> Tuple[Resource, CheckResult]:
     )
 
 
-def check_server(scim: SCIMClient) -> List[CheckResult]:
+def check_server(scim: SCIMClient) -> list[CheckResult]:
     """Perform a series of check to a SCIM server.
 
     It starts by retrieving the standard :class:`~scim2_models.ServiceProviderConfig`,

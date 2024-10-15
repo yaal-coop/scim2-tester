@@ -1,5 +1,3 @@
-from typing import Tuple
-
 from scim2_client import SCIMClient
 from scim2_client import SCIMClientError
 from scim2_models import Resource
@@ -11,7 +9,7 @@ from .utils import decorate_result
 
 
 @decorate_result
-def check_resource_types_endpoint(scim: SCIMClient) -> Tuple[Resource, CheckResult]:
+def check_resource_types_endpoint(scim: SCIMClient) -> tuple[Resource, CheckResult]:
     """As described in RFC7644 §4 <rfc7644#section-4>`, `/ResourceTypes` is a
     mandatory endpoint, and should only be accessible by GET.
 
