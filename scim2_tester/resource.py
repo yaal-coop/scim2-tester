@@ -1,8 +1,6 @@
 import random
 import uuid
 from enum import Enum
-from typing import List
-from typing import Tuple
 from typing import get_origin
 
 from pydantic import EmailStr
@@ -79,7 +77,7 @@ def fill_with_random_values(obj) -> Resource:
 @decorate_result
 def check_object_creation(
     scim: SCIMClient, obj: Resource
-) -> Tuple[Resource, CheckResult]:
+) -> tuple[Resource, CheckResult]:
     """Perform an object creation.
 
     TODO:
@@ -101,7 +99,7 @@ def check_object_creation(
 
 
 @decorate_result
-def check_object_query(scim: SCIMClient, obj: Resource) -> Tuple[Resource, CheckResult]:
+def check_object_query(scim: SCIMClient, obj: Resource) -> tuple[Resource, CheckResult]:
     """Perform an object query by knowing its id.
 
     TODO:
@@ -125,7 +123,7 @@ def check_object_query(scim: SCIMClient, obj: Resource) -> Tuple[Resource, Check
 @decorate_result
 def check_object_query_without_id(
     scim: SCIMClient, obj: Resource
-) -> Tuple[Resource, CheckResult]:
+) -> tuple[Resource, CheckResult]:
     """Perform an object creation.
 
     TODO:
@@ -158,7 +156,7 @@ def check_object_query_without_id(
 @decorate_result
 def check_object_replacement(
     scim: SCIMClient, obj: Resource
-) -> Tuple[Resource, CheckResult]:
+) -> tuple[Resource, CheckResult]:
     """Perform an object replacement.
 
     TODO:
@@ -182,7 +180,7 @@ def check_object_replacement(
 @decorate_result
 def check_object_deletion(
     scim: SCIMClient, obj: Resource
-) -> Tuple[Resource, CheckResult]:
+) -> tuple[Resource, CheckResult]:
     """Perform an object deletion."""
 
     try:
@@ -201,7 +199,7 @@ def check_resource_type(
     scim: SCIMClient,
     resource_type: ResourceType,
     service_provider_config: ServiceProviderConfig,
-) -> List[CheckResult]:
+) -> list[CheckResult]:
     """
     TODO:
 
