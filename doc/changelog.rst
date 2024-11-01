@@ -13,15 +13,15 @@ Added
 
 Fixed
 ^^^^^
-- check_random_url error after scim2-client 0.2.0 update. #8
+- check_random_url error after scim2-client 0.2.0 update. :issue:`8`
 
 [0.1.4] - 2024-09-01
 --------------------
 
 Fixed
 ^^^^^
-- Do not raise exceptions when encountering SCIM errors. #3
-- Invalid domains and network errors are properly handled. #6
+- Do not raise exceptions when encountering SCIM errors. :issue:`3`
+- Invalid domains and network errors are properly handled. :issue:`6`
 
 [0.1.3] - 2024-07-25
 --------------------

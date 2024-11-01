@@ -17,6 +17,7 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx.ext.viewcode",
     "sphinx_click",
+    "sphinx_issues",
     "sphinxcontrib.autodoc_pydantic",
     "myst_parser",
 ]
@@ -69,3 +70,7 @@ html_theme_options = {
         },
     ],
 }
+
+# -- Options for sphinx-issues -------------------------------------
+
+issues_github_path = "python-scim/scim2-models"
