@@ -12,15 +12,12 @@ from .utils import decorate_result
 def check_service_provider_config_endpoint(
     scim: SCIMClient,
 ) -> tuple[Resource, CheckResult]:
-    """As described in RFC7644 §4 <rfc7644#section-4>`,
-    `/ServiceProviderConfig` is a mandatory endpoint, and should only be
-    accessible by GET.
+    """As described in RFC7644 §4 <rfc7644#section-4>`, `/ServiceProviderConfig` is a mandatory endpoint, and should only be accessible by GET.
 
     .. todo::
 
         Check thet POST/PUT/PATCH/DELETE methods on the endpoint
     """
-
     try:
         response = scim.query(ServiceProviderConfig)
     except SCIMClientError as exc:

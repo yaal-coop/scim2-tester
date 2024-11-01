@@ -19,8 +19,7 @@ from scim2_tester.utils import decorate_result
 
 @decorate_result
 def check_random_url(scim: SCIMClient) -> tuple[Resource, CheckResult]:
-    """A request to a random URL should return a 404 Error object."""
-
+    """Check that a request to a random URL returns a 404 Error object."""
     probably_invalid_url = f"/{str(uuid.uuid4())}"
     try:
         response = scim.query(url=probably_invalid_url, raise_scim_errors=False)
@@ -57,7 +56,6 @@ def check_server(scim: SCIMClient) -> list[CheckResult]:
 
     Then for all discovered resources, it perform a series of creation, query, replacement and deletion.
     """
-
     results = []
 
     # Get the initial basic objects

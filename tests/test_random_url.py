@@ -12,7 +12,6 @@ from scim2_tester.utils import Status
 
 def test_random_url(httpserver):
     """Test reaching a random URL that returns a SCIM 404 error."""
-
     httpserver.expect_request(re.compile(r".*")).respond_with_json(
         Error(status=404, detail="Endpoint Not Found").model_dump(),
         status=404,
@@ -29,7 +28,6 @@ def test_random_url(httpserver):
 
 def test_random_url_valid_object(httpserver):
     """Test reaching a random URL that returns a SCIM object."""
-
     httpserver.expect_request(re.compile(r".*")).respond_with_json(
         User(
             id="2819c223-7f76-453a-919d-413861904646", user_name="bjensen@example.com"
@@ -48,7 +46,6 @@ def test_random_url_valid_object(httpserver):
 
 def test_random_url_not_404(httpserver):
     """Test reaching a random URL that returns a SCIM object."""
-
     httpserver.expect_request(re.compile(r".*")).respond_with_json(
         Error(status=200, detail="Endpoint Not Found").model_dump(),
         status=200,

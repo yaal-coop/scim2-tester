@@ -10,8 +10,7 @@ from .utils import decorate_result
 
 @decorate_result
 def check_resource_types_endpoint(scim: SCIMClient) -> tuple[Resource, CheckResult]:
-    """As described in RFC7644 §4 <rfc7644#section-4>`, `/ResourceTypes` is a
-    mandatory endpoint, and should only be accessible by GET.
+    """As described in RFC7644 §4 <rfc7644#section-4>`, `/ResourceTypes` is a mandatory endpoint, and should only be accessible by GET.
 
     .. todo::
 
@@ -21,7 +20,6 @@ def check_resource_types_endpoint(scim: SCIMClient) -> tuple[Resource, CheckResu
         - Check that a 403 response is returned if a filter is passed
         - Check that the `schema` attribute exists and is available.
     """
-
     try:
         response = scim.query(ResourceType)
 

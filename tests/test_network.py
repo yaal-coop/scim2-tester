@@ -13,7 +13,6 @@ from scim2_tester.utils import Status
 
 def test_unreachable_host():
     """Test reaching a invalid URL."""
-
     client = Client(base_url="https://invalid.test")
     scim = SCIMClient(client, resource_types=(User, Group))
     results = check_server(scim)
@@ -26,7 +25,6 @@ def test_unreachable_host():
 
 def test_bad_authentication(httpserver):
     """Test reaching a valid URL with incorrect authentication."""
-
     httpserver.expect_request(re.compile(r".*")).respond_with_json(
         Error(status=401, detail="Authentication is needed").model_dump(),
         status=401,

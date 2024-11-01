@@ -21,11 +21,6 @@ from scim2_tester.utils import decorate_result
 
 
 def model_from_resource_type(resource_type: ResourceType):
-    """TODO:
-
-    - Actually guess the resource type from the schema.
-
-    """
     if resource_type.id == "User":
         return User
 
@@ -80,11 +75,11 @@ def check_object_creation(
 ) -> tuple[Resource, CheckResult]:
     """Perform an object creation.
 
-    TODO:
+    Todo:
       - check if the fields of the result object are the same than the
       fields of the request object
-    """
 
+    """
     try:
         response = scim.create(obj)
 
@@ -102,11 +97,11 @@ def check_object_creation(
 def check_object_query(scim: SCIMClient, obj: Resource) -> tuple[Resource, CheckResult]:
     """Perform an object query by knowing its id.
 
-    TODO:
+    Todo:
       - check if the fields of the result object are the same than the
       fields of the request object
-    """
 
+    """
     try:
         response = scim.query(obj.__class__, obj.id)
 
@@ -126,12 +121,12 @@ def check_object_query_without_id(
 ) -> tuple[Resource, CheckResult]:
     """Perform an object creation.
 
-    TODO:
+    Todo:
       - look for the object across several pages
       - check if the fields of the result object are the same than the
       fields of the request object
-    """
 
+    """
     try:
         response = scim.query(obj.__class__)
 
@@ -159,11 +154,11 @@ def check_object_replacement(
 ) -> tuple[Resource, CheckResult]:
     """Perform an object replacement.
 
-    TODO:
+    Todo:
       - check if the fields of the result object are the same than the
       fields of the request object
-    """
 
+    """
     try:
         response = scim.replace(obj)
 
@@ -182,7 +177,6 @@ def check_object_deletion(
     scim: SCIMClient, obj: Resource
 ) -> tuple[Resource, CheckResult]:
     """Perform an object deletion."""
-
     try:
         scim.delete(obj.__class__, obj.id)
 
@@ -200,12 +194,6 @@ def check_resource_type(
     resource_type: ResourceType,
     service_provider_config: ServiceProviderConfig,
 ) -> list[CheckResult]:
-    """
-    TODO:
-
-    - Make a 'skip' status
-    - Check search
-    """
     results = []
 
     model = model_from_resource_type(resource_type)
