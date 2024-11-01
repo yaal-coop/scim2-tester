@@ -3,13 +3,13 @@ Contribution
 
 Contributions are welcome!
 
-The repository is hosted at `github.com/yaal-coop/scim2-tester <https://github.com/yaal-coop/scim2-tester>`_.
+The repository is hosted at `github.com/python-scim/scim2-tester <https://github.com/python-scim/scim2-tester>`_.
 
 Discuss
 -------
 
 If you want to implement a feature or a bugfix, please start by discussing it with us on
-the `bugtracker <https://github.com/yaal-coop/scim2-tester/issues>`_.
+the `bugtracker <https://github.com/python-scim/scim2-tester/issues>`_.
 
 Unit tests
 ----------

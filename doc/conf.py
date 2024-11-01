@@ -55,7 +55,7 @@ html_baseurl = "https://scim2-tester.readthedocs.io"
 html_theme_options = {
     "globaltoc_expand_depth": 3,
     "accent_color": "tomato",
-    "github_url": "https://github.com/yaal-coop/scim2-tester",
+    "github_url": "https://github.com/python-scim/scim2-tester",
     "mastodon_url": "https://toot.aquilenet.fr/@yaal",
     "nav_links": [
         {"title": "scim2-models", "url": "https://scim2-models.readthedocs.io"},

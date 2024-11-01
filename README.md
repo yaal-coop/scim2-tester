@@ -36,6 +36,6 @@ scim https://scim.example test
 You can check the [scim2-cli test command reference](https://scim2-cli.readthedocs.io/en/latest/reference.html#scim-url-test) for more details.
 
 scim2-tester belongs in a collection of SCIM tools developed by [Yaal Coop](https://yaal.coop),
-with [scim2-models](https://github.com/yaal-coop/scim2-models),
-[scim2-client](https://github.com/yaal-coop/scim2-client) and
-[scim2-cli](https://github.com/yaal-coop/scim2-cli)
+with [scim2-models](https://github.com/python-scim/scim2-models),
+[scim2-client](https://github.com/python-scim/scim2-client) and
+[scim2-cli](https://github.com/python-scim/scim2-cli)
