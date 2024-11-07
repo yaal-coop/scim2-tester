@@ -1,6 +1,7 @@
 import random
 import uuid
 from enum import Enum
+from inspect import isclass
 from typing import get_origin
 
 from pydantic import EmailStr
@@ -50,10 +51,10 @@ def fill_with_random_values(obj) -> Resource:
             # pydantic won't allow to use the 'test' TLD here
             value = f"{uuid.uuid4()}@{uuid.uuid4()}.com"
 
-        elif issubclass(field_type, Enum):
+        elif isclass(field_type) and issubclass(field_type, Enum):
             value = random.choice(list(field_type))
 
-        elif issubclass(field_type, ComplexAttribute):
+        elif isclass(field_type) and issubclass(field_type, ComplexAttribute):
             value = field_type()
             fill_with_random_values(value)
 
