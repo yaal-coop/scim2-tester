@@ -4,6 +4,8 @@ from enum import Enum
 from enum import auto
 from typing import Any
 
+from scim2_client import SCIMClientError
+
 
 class Status(Enum):
     SUCCESS = auto()
@@ -29,10 +31,21 @@ class CheckResult:
     """Any related data that can help to debug."""
 
 
-def decorate_result(func):
+def checker(func):
+    """Decorate checker methods.
+
+    - It adds a title and a description to the returned result, extracted from the method name and its docstring.
+    - It catches SCIMClient errors.
+    """
+
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
-        result = func(*args, **kwargs)
+        try:
+            result = func(*args, **kwargs)
+        except SCIMClientError as exc:
+            result = CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
+
+        # decorate results
         if isinstance(result, CheckResult):
             result.title = func.__name__
             result.description = func.__doc__

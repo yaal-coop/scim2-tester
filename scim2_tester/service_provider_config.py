@@ -1,14 +1,13 @@
 from scim2_client import SCIMClient
-from scim2_client import SCIMClientError
 from scim2_models import Resource
 from scim2_models import ServiceProviderConfig
 
 from .utils import CheckResult
 from .utils import Status
-from .utils import decorate_result
+from .utils import checker
 
 
-@decorate_result
+@checker
 def check_service_provider_config_endpoint(
     scim: SCIMClient,
 ) -> tuple[Resource, CheckResult]:
@@ -18,9 +17,5 @@ def check_service_provider_config_endpoint(
 
         Check thet POST/PUT/PATCH/DELETE methods on the endpoint
     """
-    try:
-        response = scim.query(ServiceProviderConfig)
-    except SCIMClientError as exc:
-        return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
-
+    response = scim.query(ServiceProviderConfig)
     return CheckResult(status=Status.SUCCESS, data=response)

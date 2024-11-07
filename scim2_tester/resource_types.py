@@ -1,14 +1,13 @@
 from scim2_client import SCIMClient
-from scim2_client import SCIMClientError
 from scim2_models import Resource
 from scim2_models import ResourceType
 
 from .utils import CheckResult
 from .utils import Status
-from .utils import decorate_result
+from .utils import checker
 
 
-@decorate_result
+@checker
 def check_resource_types_endpoint(scim: SCIMClient) -> tuple[Resource, CheckResult]:
     """As described in RFC7644 §4 <rfc7644#section-4>`, `/ResourceTypes` is a mandatory endpoint, and should only be accessible by GET.
 
@@ -20,12 +19,7 @@ def check_resource_types_endpoint(scim: SCIMClient) -> tuple[Resource, CheckResu
         - Check that a 403 response is returned if a filter is passed
         - Check that the `schema` attribute exists and is available.
     """
-    try:
-        response = scim.query(ResourceType)
-
-    except SCIMClientError as exc:
-        return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
-
+    response = scim.query(ResourceType)
     available = ", ".join([f"'{resource.name}'" for resource in response.resources])
     reason = f"Resource types available are: {available}"
     return CheckResult(status=Status.SUCCESS, reason=reason, data=response.resources)

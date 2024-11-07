@@ -6,7 +6,6 @@ from typing import get_origin
 
 from pydantic import EmailStr
 from scim2_client import SCIMClient
-from scim2_client import SCIMClientError
 from scim2_models import ComplexAttribute
 from scim2_models import Group
 from scim2_models import Meta
@@ -18,7 +17,7 @@ from scim2_models import User
 
 from scim2_tester.utils import CheckResult
 from scim2_tester.utils import Status
-from scim2_tester.utils import decorate_result
+from scim2_tester.utils import checker
 
 
 def model_from_resource_type(resource_type: ResourceType):
@@ -70,7 +69,7 @@ def fill_with_random_values(obj) -> Resource:
     return obj
 
 
-@decorate_result
+@checker
 def check_object_creation(
     scim: SCIMClient, obj: Resource
 ) -> tuple[Resource, CheckResult]:
@@ -81,11 +80,7 @@ def check_object_creation(
       fields of the request object
 
     """
-    try:
-        response = scim.create(obj)
-
-    except SCIMClientError as exc:
-        return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
+    response = scim.create(obj)
 
     return CheckResult(
         status=Status.SUCCESS,
@@ -94,7 +89,7 @@ def check_object_creation(
     )
 
 
-@decorate_result
+@checker
 def check_object_query(scim: SCIMClient, obj: Resource) -> tuple[Resource, CheckResult]:
     """Perform an object query by knowing its id.
 
@@ -103,12 +98,7 @@ def check_object_query(scim: SCIMClient, obj: Resource) -> tuple[Resource, Check
       fields of the request object
 
     """
-    try:
-        response = scim.query(obj.__class__, obj.id)
-
-    except SCIMClientError as exc:
-        return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
-
+    response = scim.query(obj.__class__, obj.id)
     return CheckResult(
         status=Status.SUCCESS,
         reason=f"Successful query of a {obj.__class__.__name__} object with id {response.id}",
@@ -116,7 +106,7 @@ def check_object_query(scim: SCIMClient, obj: Resource) -> tuple[Resource, Check
     )
 
 
-@decorate_result
+@checker
 def check_object_query_without_id(
     scim: SCIMClient, obj: Resource
 ) -> tuple[Resource, CheckResult]:
@@ -128,12 +118,7 @@ def check_object_query_without_id(
       fields of the request object
 
     """
-    try:
-        response = scim.query(obj.__class__)
-
-    except SCIMClientError as exc:
-        return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
-
+    response = scim.query(obj.__class__)
     found = any(obj.id == resource.id for resource in response.resources)
     if not found:
         return CheckResult(
@@ -149,7 +134,7 @@ def check_object_query_without_id(
     )
 
 
-@decorate_result
+@checker
 def check_object_replacement(
     scim: SCIMClient, obj: Resource
 ) -> tuple[Resource, CheckResult]:
@@ -160,12 +145,7 @@ def check_object_replacement(
       fields of the request object
 
     """
-    try:
-        response = scim.replace(obj)
-
-    except SCIMClientError as exc:
-        return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
-
+    response = scim.replace(obj)
     return CheckResult(
         status=Status.SUCCESS,
         reason=f"Successful replacement of a {obj.__class__.__name__} object with id {response.id}",
@@ -173,17 +153,12 @@ def check_object_replacement(
     )
 
 
-@decorate_result
+@checker
 def check_object_deletion(
     scim: SCIMClient, obj: Resource
 ) -> tuple[Resource, CheckResult]:
     """Perform an object deletion."""
-    try:
-        scim.delete(obj.__class__, obj.id)
-
-    except SCIMClientError as exc:
-        return CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
-
+    scim.delete(obj.__class__, obj.id)
     return CheckResult(
         status=Status.SUCCESS,
         reason=f"Successful deletion of a {obj.__class__.__name__} object with id {obj.id}",
