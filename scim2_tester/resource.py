@@ -34,6 +34,8 @@ def fill_with_random_values(obj) -> Resource:
             continue
 
         field_type = obj.get_field_root_type(field_name)
+        is_multiple = obj.get_field_multiplicity(field_name)
+
         if field_type is Meta:
             value = None
 
@@ -60,8 +62,7 @@ def fill_with_random_values(obj) -> Resource:
         else:
             value = str(uuid.uuid4())
 
-        # TODO: fix this this is UGLY🤮
-        if "list" in str(field.annotation).lower():
+        if is_multiple:
             setattr(obj, field_name, [value])
 
         else:
