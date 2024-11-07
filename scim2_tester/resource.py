@@ -7,25 +7,15 @@ from typing import get_origin
 from pydantic import EmailStr
 from scim2_client import SCIMClient
 from scim2_models import ComplexAttribute
-from scim2_models import Group
 from scim2_models import Meta
 from scim2_models import Reference
 from scim2_models import Resource
 from scim2_models import ResourceType
 from scim2_models import ServiceProviderConfig
-from scim2_models import User
 
 from scim2_tester.utils import CheckResult
 from scim2_tester.utils import Status
 from scim2_tester.utils import checker
-
-
-def model_from_resource_type(resource_type: ResourceType):
-    if resource_type.id == "User":
-        return User
-
-    if resource_type.id == "Group":
-        return Group
 
 
 def fill_with_random_values(obj) -> Resource:
@@ -169,11 +159,11 @@ def check_object_deletion(
 def check_resource_type(
     scim: SCIMClient,
     resource_type: ResourceType,
+    model: type(Resource),
     service_provider_config: ServiceProviderConfig,
 ) -> list[CheckResult]:
     results = []
 
-    model = model_from_resource_type(resource_type)
     obj = model()
     fill_with_random_values(obj)
 

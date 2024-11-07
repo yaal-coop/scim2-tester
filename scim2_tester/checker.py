@@ -5,6 +5,7 @@ from scim2_client import SCIMClient
 from scim2_models import Error
 from scim2_models import Group
 from scim2_models import Resource
+from scim2_models import ResourceType
 from scim2_models import User
 
 from scim2_tester.resource import check_resource_type
@@ -43,6 +44,14 @@ def check_random_url(scim: SCIMClient) -> tuple[Resource, CheckResult]:
     )
 
 
+def model_from_resource_type(
+    resource_type: ResourceType, models: list[type(Resource)]
+) -> type(Resource) | None:
+    for model in models:
+        if resource_type.schema_ == model.model_fields["schemas"].default[0]:
+            return model
+
+
 def check_server(scim: SCIMClient) -> list[CheckResult]:
     """Perform a series of check to a SCIM server.
 
@@ -61,6 +70,12 @@ def check_server(scim: SCIMClient) -> list[CheckResult]:
     result_schemas = check_schemas_endpoint(scim)
     results.append(result_schemas)
 
+    resource_models = (
+        [Resource.from_schema(schema) for schema in result_schemas.data]
+        if result_schemas.data
+        else scim.resource_types
+    )
+
     result_resource_types = check_resource_types_endpoint(scim)
     resource_types = result_resource_types.data
     results.append(result_resource_types)
@@ -72,9 +87,11 @@ def check_server(scim: SCIMClient) -> list[CheckResult]:
     # Resource checks
     if result_resource_types.status == Status.SUCCESS:
         for resource_type in resource_types:
-            results.extend(
-                check_resource_type(scim, resource_type, service_provider_config)
+            model = model_from_resource_type(resource_type, resource_models)
+            result = check_resource_type(
+                scim, resource_type, model, service_provider_config
             )
+            results.extend(result)
 
     return results
 
