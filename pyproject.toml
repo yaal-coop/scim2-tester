@@ -26,7 +26,7 @@ classifiers = [
 
 requires-python = ">= 3.10"
 dependencies = [
-    "scim2-client>=0.2.0",
+    "scim2-client>=0.3.0",
 ]
 
 [project.urls]
@@ -34,6 +34,11 @@ documentation = "https://scim2-tester.readthedocs.io"
 repository = "https://github.com/python-scim/scim2-tester"
 changelog = "https://scim2-tester.readthedocs.io/en/latest/changelog.html"
 funding = "https://github.com/sponsors/python-scim"
+
+[project.optional-dependencies]
+httpx = [
+    "scim2-client[httpx]>=0.3.0",
+]
 
 [dependency-groups]
 dev = [
@@ -115,6 +120,7 @@ env_list = [
 ]
 
 [tool.tox.env_run_base]
+extras = ["httpx"]
 runner = "uv-venv-lock-runner"
 dependency_groups = ["dev"]
 commands = [

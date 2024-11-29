@@ -4,7 +4,7 @@ import wsgiref.simple_server
 import portpicker
 import pytest
 from httpx import Client
-from scim2_client import SCIMClient
+from scim2_client.engines.httpx import SyncSCIMClient
 from scim2_models import Group
 from scim2_models import User
 from scim2_server.backend import InMemoryBackend
@@ -41,6 +41,6 @@ def scim2_server():
 def test_scim2_server(scim2_server):
     host, port = scim2_server
     client = Client(base_url=f"http://{host}:{port}")
-    scim = SCIMClient(client, resource_types=(User, Group))
+    scim = SyncSCIMClient(client, resource_models=(User, Group))
     results = check_server(scim)
     assert all(result.status == Status.SUCCESS for result in results)

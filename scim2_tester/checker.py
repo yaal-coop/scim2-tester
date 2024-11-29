@@ -1,7 +1,7 @@
 import argparse
 import uuid
 
-from scim2_client import SCIMClient
+from scim2_client import BaseSCIMClient
 from scim2_models import Error
 from scim2_models import Group
 from scim2_models import Resource
@@ -17,7 +17,7 @@ from scim2_tester.utils import checker
 
 
 @checker
-def check_random_url(scim: SCIMClient) -> tuple[Resource, CheckResult]:
+def check_random_url(scim: BaseSCIMClient) -> tuple[Resource, CheckResult]:
     """Check that a request to a random URL returns a 404 Error object."""
     probably_invalid_url = f"/{str(uuid.uuid4())}"
     response = scim.query(url=probably_invalid_url, raise_scim_errors=False)
@@ -43,7 +43,7 @@ def check_random_url(scim: SCIMClient) -> tuple[Resource, CheckResult]:
     )
 
 
-def check_server(scim: SCIMClient) -> list[CheckResult]:
+def check_server(scim: BaseSCIMClient) -> list[CheckResult]:
     """Perform a series of check to a SCIM server.
 
     It starts by retrieving the standard :class:`~scim2_models.ServiceProviderConfig`,
@@ -81,6 +81,7 @@ def check_server(scim: SCIMClient) -> list[CheckResult]:
 
 if __name__ == "__main__":
     from httpx import Client
+    from scim2_client.engines.httpx import SyncSCIMClient
 
     parser = argparse.ArgumentParser(description="Process some integers.")
     parser.add_argument("host")
@@ -92,7 +93,7 @@ if __name__ == "__main__":
         base_url=args.host,
         headers={"Authorization": f"Bearer {args.token}"} if args.token else None,
     )
-    scim = SCIMClient(client, resource_types=(User, Group))
+    scim = SyncSCIMClient(client, resource_models=(User, Group))
     results = check_server(scim)
     for result in results:
         print(result.status.name, result.title)

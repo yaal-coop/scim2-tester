@@ -1,7 +1,7 @@
 import re
 
 from httpx import Client
-from scim2_client import SCIMClient
+from scim2_client.engines.httpx import SyncSCIMClient
 from scim2_models import Context
 from scim2_models import Error
 from scim2_models import Group
@@ -16,7 +16,7 @@ from scim2_tester.utils import Status
 def test_unreachable_host():
     """Test reaching a invalid URL."""
     client = Client(base_url="https://invalid.test")
-    scim = SCIMClient(client, resource_types=(User, Group))
+    scim = SyncSCIMClient(client, resource_models=(User, Group))
     results = check_server(scim)
 
     assert all(result.status == Status.ERROR for result in results)
@@ -34,7 +34,7 @@ def test_bad_authentication(httpserver):
     )
 
     client = Client(base_url=f"http://localhost:{httpserver.port}")
-    scim = SCIMClient(client, resource_types=(User, Group))
+    scim = SyncSCIMClient(client, resource_models=(User, Group))
     result = check_schemas_endpoint(scim)
 
     assert result.status == Status.ERROR
@@ -69,7 +69,7 @@ def test_bad_content_type(httpserver):
     )
 
     client = Client(base_url=f"http://localhost:{httpserver.port}")
-    scim = SCIMClient(client, resource_types=(User, Group))
+    scim = SyncSCIMClient(client, resource_models=(User, Group))
 
     result = check_object_query(scim, scim_user)
     assert result.status == Status.SUCCESS

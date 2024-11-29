@@ -5,7 +5,7 @@ from inspect import isclass
 from typing import get_origin
 
 from pydantic import EmailStr
-from scim2_client import SCIMClient
+from scim2_client import BaseSCIMClient
 from scim2_models import ComplexAttribute
 from scim2_models import Group
 from scim2_models import Meta
@@ -72,7 +72,7 @@ def fill_with_random_values(obj) -> Resource:
 
 @checker
 def check_object_creation(
-    scim: SCIMClient, obj: Resource
+    scim: BaseSCIMClient, obj: Resource
 ) -> tuple[Resource, CheckResult]:
     """Perform an object creation.
 
@@ -91,7 +91,9 @@ def check_object_creation(
 
 
 @checker
-def check_object_query(scim: SCIMClient, obj: Resource) -> tuple[Resource, CheckResult]:
+def check_object_query(
+    scim: BaseSCIMClient, obj: Resource
+) -> tuple[Resource, CheckResult]:
     """Perform an object query by knowing its id.
 
     Todo:
@@ -109,7 +111,7 @@ def check_object_query(scim: SCIMClient, obj: Resource) -> tuple[Resource, Check
 
 @checker
 def check_object_query_without_id(
-    scim: SCIMClient, obj: Resource
+    scim: BaseSCIMClient, obj: Resource
 ) -> tuple[Resource, CheckResult]:
     """Perform an object creation.
 
@@ -137,7 +139,7 @@ def check_object_query_without_id(
 
 @checker
 def check_object_replacement(
-    scim: SCIMClient, obj: Resource
+    scim: BaseSCIMClient, obj: Resource
 ) -> tuple[Resource, CheckResult]:
     """Perform an object replacement.
 
@@ -156,7 +158,7 @@ def check_object_replacement(
 
 @checker
 def check_object_deletion(
-    scim: SCIMClient, obj: Resource
+    scim: BaseSCIMClient, obj: Resource
 ) -> tuple[Resource, CheckResult]:
     """Perform an object deletion."""
     scim.delete(obj.__class__, obj.id)
@@ -167,7 +169,7 @@ def check_object_deletion(
 
 
 def check_resource_type(
-    scim: SCIMClient,
+    scim: BaseSCIMClient,
     resource_type: ResourceType,
     service_provider_config: ServiceProviderConfig,
 ) -> list[CheckResult]:

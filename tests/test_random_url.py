@@ -1,7 +1,7 @@
 import re
 
 from httpx import Client
-from scim2_client import SCIMClient
+from scim2_client.engines.httpx import SyncSCIMClient
 from scim2_models import Error
 from scim2_models import Group
 from scim2_models import User
@@ -19,7 +19,7 @@ def test_random_url(httpserver):
     )
 
     client = Client(base_url=f"http://localhost:{httpserver.port}")
-    scim = SCIMClient(client, resource_types=(User, Group))
+    scim = SyncSCIMClient(client, resource_models=(User, Group))
     result = check_random_url(scim)
 
     assert result.status == Status.SUCCESS
@@ -37,7 +37,7 @@ def test_random_url_valid_object(httpserver):
     )
 
     client = Client(base_url=f"http://localhost:{httpserver.port}")
-    scim = SCIMClient(client, resource_types=(User, Group))
+    scim = SyncSCIMClient(client, resource_models=(User, Group))
     result = check_random_url(scim)
 
     assert result.status == Status.ERROR
@@ -53,7 +53,7 @@ def test_random_url_not_404(httpserver):
     )
 
     client = Client(base_url=f"http://localhost:{httpserver.port}")
-    scim = SCIMClient(client, resource_types=(User, Group))
+    scim = SyncSCIMClient(client, resource_models=(User, Group))
     result = check_random_url(scim)
 
     assert result.status == Status.ERROR

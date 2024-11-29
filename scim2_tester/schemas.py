@@ -1,4 +1,4 @@
-from scim2_client import SCIMClient
+from scim2_client import BaseSCIMClient
 from scim2_models import Resource
 from scim2_models import Schema
 
@@ -8,7 +8,7 @@ from .utils import checker
 
 
 @checker
-def check_schemas_endpoint(scim: SCIMClient) -> tuple[Resource, CheckResult]:
+def check_schemas_endpoint(scim: BaseSCIMClient) -> tuple[Resource, CheckResult]:
     """As described in RFC7644 §4 <rfc7644#section-4>`, `/ResourceTypes` is a mandatory endpoint, and should only be accessible by GET.
 
     .. todo::

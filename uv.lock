@@ -854,15 +854,19 @@ wheels = [
 
 [[package]]
 name = "scim2-client"
-version = "0.2.2"
+version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "httpx" },
     { name = "scim2-models" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ab/9a/fb54432f7d1911fa64306278c9b1faf9d58d3f0ca03e779be3cffdfe6dbc/scim2_client-0.2.2.tar.gz", hash = "sha256:4ee4441c00753f5e136e648ee7c51a006a7933c41c299a94758b0ad2dd3ee1e9", size = 73012 }
+sdist = { url = "https://files.pythonhosted.org/packages/25/46/b333a7ac2909efce84a778e108e4408281139a8db68df298ecb7c3a3a7ab/scim2_client-0.3.0.tar.gz", hash = "sha256:d76cab6546bda72173dbd59781b05bec237f6ff9a72d309afeff25a40c03612f", size = 82847 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5c/d7/b9d53ff4b81e533c6c85dc408caa6a98876e1ad2193ec28e1835dcb16b54/scim2_client-0.2.2-py3-none-any.whl", hash = "sha256:5c2894fc07956bfe811fae04e459338ed38063bb04286bc07b760e3ee55629f6", size = 16676 },
+    { url = "https://files.pythonhosted.org/packages/de/a1/73b8dc5458477474022aac72c571b1906c034d1532b38c77526b23aa5b14/scim2_client-0.3.0-py3-none-any.whl", hash = "sha256:5df63e8558dd12b2cb5a7005bf5059e158e0e1cef4cfdb91d532483e65652971", size = 20595 },
+]
+
+[package.optional-dependencies]
+httpx = [
+    { name = "httpx" },
 ]
 
 [[package]]
@@ -911,6 +915,11 @@ dependencies = [
     { name = "scim2-client" },
 ]
 
+[package.optional-dependencies]
+httpx = [
+    { name = "scim2-client", extra = ["httpx"] },
+]
+
 [package.dev-dependencies]
 dev = [
     { name = "portpicker" },
@@ -931,7 +940,10 @@ doc = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "scim2-client", specifier = ">=0.2.0" }]
+requires-dist = [
+    { name = "scim2-client", specifier = ">=0.3.0" },
+    { name = "scim2-client", extras = ["httpx"], marker = "extra == 'httpx'", specifier = ">=0.3.0" },
+]
 
 [package.metadata.requires-dev]
 dev = [
