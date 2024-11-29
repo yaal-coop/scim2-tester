@@ -57,6 +57,7 @@ doc = [
     "sphinx>=7.3.7",
     "sphinx-issues >= 5.0.0",
     "sphinx-click>=6.0.0",
+    "sphinx-paramlinks>=0.6.0",
 ]
 
 [tool.coverage.run]

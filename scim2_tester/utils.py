@@ -4,6 +4,7 @@ from enum import Enum
 from enum import auto
 from typing import Any
 
+from scim2_client import BaseSCIMClient
 from scim2_client import SCIMClientError
 
 
@@ -13,9 +14,30 @@ class Status(Enum):
 
 
 @dataclass
+class CheckConfig:
+    """Object used to configure the checks behavior."""
+
+    client: BaseSCIMClient
+    """The SCIM client that will be used to perform the requests."""
+
+    raise_exceptions: bool = False
+    """Whether to raise exceptions or store them in a :class:`~scim2_tester.Result` object."""
+
+
+class SCIMTesterError(Exception):
+    """Exception raised when a check failed and the `raise_exceptions` config parameter is :data:`True`."""
+
+    def __init__(self, message: str, conf: CheckConfig):
+        super().__init__()
+        self.message = message
+        self.conf = conf
+
+
+@dataclass
 class CheckResult:
     """Store a check result."""
 
+    conf: CheckConfig
     status: Status
 
     title: str | None = None
@@ -30,6 +52,10 @@ class CheckResult:
     data: Any | None = None
     """Any related data that can help to debug."""
 
+    def __post_init__(self):
+        if self.conf.raise_exceptions and self.status == Status.ERROR:
+            raise SCIMTesterError(self.title, self)
+
 
 def checker(func):
     """Decorate checker methods.
@@ -39,11 +65,15 @@ def checker(func):
     """
 
     @functools.wraps(func)
-    def wrapped(*args, **kwargs):
+    def wrapped(conf: CheckConfig, *args, **kwargs):
         try:
-            result = func(*args, **kwargs)
+            result = func(conf, *args, **kwargs)
         except SCIMClientError as exc:
-            result = CheckResult(status=Status.ERROR, reason=str(exc), data=exc.source)
+            if conf.raise_exceptions:
+                raise
+            result = CheckResult(
+                conf, status=Status.ERROR, reason=str(exc), data=exc.source
+            )
 
         # decorate results
         if isinstance(result, CheckResult):

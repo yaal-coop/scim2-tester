@@ -1,7 +1,7 @@
-from scim2_client import BaseSCIMClient
 from scim2_models import Resource
 from scim2_models import ServiceProviderConfig
 
+from .utils import CheckConfig
 from .utils import CheckResult
 from .utils import Status
 from .utils import checker
@@ -9,7 +9,7 @@ from .utils import checker
 
 @checker
 def check_service_provider_config_endpoint(
-    scim: BaseSCIMClient,
+    conf: CheckConfig,
 ) -> tuple[Resource, CheckResult]:
     """As described in RFC7644 §4 <rfc7644#section-4>`, `/ServiceProviderConfig` is a mandatory endpoint, and should only be accessible by GET.
 
@@ -17,5 +17,5 @@ def check_service_provider_config_endpoint(
 
         Check thet POST/PUT/PATCH/DELETE methods on the endpoint
     """
-    response = scim.query(ServiceProviderConfig)
-    return CheckResult(status=Status.SUCCESS, data=response)
+    response = conf.client.query(ServiceProviderConfig)
+    return CheckResult(conf, status=Status.SUCCESS, data=response)

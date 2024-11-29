@@ -5,7 +5,6 @@ from inspect import isclass
 from typing import get_origin
 
 from pydantic import EmailStr
-from scim2_client import BaseSCIMClient
 from scim2_models import ComplexAttribute
 from scim2_models import Group
 from scim2_models import Meta
@@ -15,6 +14,7 @@ from scim2_models import ResourceType
 from scim2_models import ServiceProviderConfig
 from scim2_models import User
 
+from scim2_tester.utils import CheckConfig
 from scim2_tester.utils import CheckResult
 from scim2_tester.utils import Status
 from scim2_tester.utils import checker
@@ -72,7 +72,7 @@ def fill_with_random_values(obj) -> Resource:
 
 @checker
 def check_object_creation(
-    scim: BaseSCIMClient, obj: Resource
+    conf: CheckConfig, obj: Resource
 ) -> tuple[Resource, CheckResult]:
     """Perform an object creation.
 
@@ -81,9 +81,10 @@ def check_object_creation(
       fields of the request object
 
     """
-    response = scim.create(obj)
+    response = conf.client.create(obj)
 
     return CheckResult(
+        conf,
         status=Status.SUCCESS,
         reason=f"Successful creation of a {obj.__class__.__name__} object with id {response.id}",
         data=response,
@@ -92,7 +93,7 @@ def check_object_creation(
 
 @checker
 def check_object_query(
-    scim: BaseSCIMClient, obj: Resource
+    conf: CheckConfig, obj: Resource
 ) -> tuple[Resource, CheckResult]:
     """Perform an object query by knowing its id.
 
@@ -101,8 +102,9 @@ def check_object_query(
       fields of the request object
 
     """
-    response = scim.query(obj.__class__, obj.id)
+    response = conf.client.query(obj.__class__, obj.id)
     return CheckResult(
+        conf,
         status=Status.SUCCESS,
         reason=f"Successful query of a {obj.__class__.__name__} object with id {response.id}",
         data=response,
@@ -111,7 +113,7 @@ def check_object_query(
 
 @checker
 def check_object_query_without_id(
-    scim: BaseSCIMClient, obj: Resource
+    conf: CheckConfig, obj: Resource
 ) -> tuple[Resource, CheckResult]:
     """Perform an object creation.
 
@@ -121,16 +123,18 @@ def check_object_query_without_id(
       fields of the request object
 
     """
-    response = scim.query(obj.__class__)
+    response = conf.client.query(obj.__class__)
     found = any(obj.id == resource.id for resource in response.resources)
     if not found:
         return CheckResult(
+            conf,
             status=Status.ERROR,
             reason=f"Could not find object {obj.__class__.__name__} with id : {response.detail}",
             data=response,
         )
 
     return CheckResult(
+        conf,
         status=Status.SUCCESS,
         reason=f"Successful query of a {obj.__class__.__name__} object with id {obj.id}",
         data=response,
@@ -139,7 +143,7 @@ def check_object_query_without_id(
 
 @checker
 def check_object_replacement(
-    scim: BaseSCIMClient, obj: Resource
+    conf: CheckConfig, obj: Resource
 ) -> tuple[Resource, CheckResult]:
     """Perform an object replacement.
 
@@ -148,8 +152,9 @@ def check_object_replacement(
       fields of the request object
 
     """
-    response = scim.replace(obj)
+    response = conf.client.replace(obj)
     return CheckResult(
+        conf,
         status=Status.SUCCESS,
         reason=f"Successful replacement of a {obj.__class__.__name__} object with id {response.id}",
         data=response,
@@ -158,18 +163,19 @@ def check_object_replacement(
 
 @checker
 def check_object_deletion(
-    scim: BaseSCIMClient, obj: Resource
+    conf: CheckConfig, obj: Resource
 ) -> tuple[Resource, CheckResult]:
     """Perform an object deletion."""
-    scim.delete(obj.__class__, obj.id)
+    conf.client.delete(obj.__class__, obj.id)
     return CheckResult(
+        conf,
         status=Status.SUCCESS,
         reason=f"Successful deletion of a {obj.__class__.__name__} object with id {obj.id}",
     )
 
 
 def check_resource_type(
-    scim: BaseSCIMClient,
+    conf: CheckConfig,
     resource_type: ResourceType,
     service_provider_config: ServiceProviderConfig,
 ) -> list[CheckResult]:
@@ -179,23 +185,23 @@ def check_resource_type(
     obj = model()
     fill_with_random_values(obj)
 
-    result = check_object_creation(scim, obj)
+    result = check_object_creation(conf, obj)
     results.append(result)
 
     if result.status == Status.SUCCESS:
         created_obj = result.data
-        result = check_object_query(scim, created_obj)
+        result = check_object_query(conf, created_obj)
         queried_obj = result.data
         results.append(result)
 
-        result = check_object_query_without_id(scim, created_obj)
+        result = check_object_query_without_id(conf, created_obj)
         results.append(result)
 
         fill_with_random_values(queried_obj)
-        result = check_object_replacement(scim, created_obj)
+        result = check_object_replacement(conf, created_obj)
         results.append(result)
 
-        result = check_object_deletion(scim, created_obj)
+        result = check_object_deletion(conf, created_obj)
         results.append(result)
 
     return results

@@ -10,6 +10,7 @@ from scim2_models import User
 from scim2_tester.checker import check_schemas_endpoint
 from scim2_tester.checker import check_server
 from scim2_tester.resource import check_object_query
+from scim2_tester.utils import CheckConfig
 from scim2_tester.utils import Status
 
 
@@ -35,7 +36,8 @@ def test_bad_authentication(httpserver):
 
     client = Client(base_url=f"http://localhost:{httpserver.port}")
     scim = SyncSCIMClient(client, resource_models=(User, Group))
-    result = check_schemas_endpoint(scim)
+    conf = CheckConfig(scim)
+    result = check_schemas_endpoint(conf)
 
     assert result.status == Status.ERROR
     assert (
@@ -70,17 +72,18 @@ def test_bad_content_type(httpserver):
 
     client = Client(base_url=f"http://localhost:{httpserver.port}")
     scim = SyncSCIMClient(client, resource_models=(User, Group))
+    conf = CheckConfig(scim)
 
-    result = check_object_query(scim, scim_user)
+    result = check_object_query(conf, scim_user)
     assert result.status == Status.SUCCESS
 
-    result = check_object_query(scim, json_user)
+    result = check_object_query(conf, json_user)
     assert result.status == Status.SUCCESS
 
-    result = check_object_query(scim, invalid_user)
+    result = check_object_query(conf, invalid_user)
     assert result.status == Status.ERROR
     assert result.reason == "Unexpected content type: application/invalid"
 
-    result = check_object_query(scim, missing_user)
+    result = check_object_query(conf, missing_user)
     assert result.status == Status.ERROR
     assert result.reason == "Unexpected content type: "

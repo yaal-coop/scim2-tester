@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[0.1.8] - Unreleased
+--------------------
+
+Added
+^^^^^
+- Implement a :paramref:`~scim2_tester.check_server.raise_exceptions` parameter that allows failed checks to raise exceptions.
+
 [0.1.7] - 2024-11-29
 --------------------
 

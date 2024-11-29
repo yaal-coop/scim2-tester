@@ -7,6 +7,7 @@ from scim2_models import Group
 from scim2_models import User
 
 from scim2_tester.checker import check_random_url
+from scim2_tester.utils import CheckConfig
 from scim2_tester.utils import Status
 
 
@@ -20,7 +21,8 @@ def test_random_url(httpserver):
 
     client = Client(base_url=f"http://localhost:{httpserver.port}")
     scim = SyncSCIMClient(client, resource_models=(User, Group))
-    result = check_random_url(scim)
+    conf = CheckConfig(scim)
+    result = check_random_url(conf)
 
     assert result.status == Status.SUCCESS
     assert "correctly returned a 404 error" in result.reason
@@ -38,7 +40,8 @@ def test_random_url_valid_object(httpserver):
 
     client = Client(base_url=f"http://localhost:{httpserver.port}")
     scim = SyncSCIMClient(client, resource_models=(User, Group))
-    result = check_random_url(scim)
+    conf = CheckConfig(scim)
+    result = check_random_url(conf)
 
     assert result.status == Status.ERROR
     assert "did not return an Error object" in result.reason
@@ -54,7 +57,8 @@ def test_random_url_not_404(httpserver):
 
     client = Client(base_url=f"http://localhost:{httpserver.port}")
     scim = SyncSCIMClient(client, resource_models=(User, Group))
-    result = check_random_url(scim)
+    conf = CheckConfig(scim)
+    result = check_random_url(conf)
 
     assert result.status == Status.ERROR
     assert "did return an object, but the status code is 200" in result.reason
