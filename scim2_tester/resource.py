@@ -2,18 +2,21 @@ import random
 import uuid
 from enum import Enum
 from inspect import isclass
+from typing import get_args
 from typing import get_origin
 
 from pydantic import EmailStr
 from scim2_models import ComplexAttribute
 from scim2_models import EnterpriseUser
 from scim2_models import Extension
+from scim2_models import ExternalReference
 from scim2_models import Group
 from scim2_models import Meta
 from scim2_models import Reference
 from scim2_models import Resource
 from scim2_models import ResourceType
 from scim2_models import ServiceProviderConfig
+from scim2_models import URIReference
 from scim2_models import User
 
 from scim2_tester.utils import CheckConfig
@@ -52,6 +55,12 @@ def fill_with_random_values(obj) -> Resource:
             value = random.choice([True, False])
 
         elif get_origin(field_type) is Reference:
+            if get_args(field_type)[0] not in (
+                ExternalReference,
+                URIReference,
+            ):
+                continue
+
             value = f"https://{str(uuid.uuid4())}.test"
 
         elif field_type is EmailStr:

@@ -5,6 +5,9 @@ Added
 ^^^^^
 - Restrict expected status codes in checks.
 
+Fixed
+^^^^^
+- Avoid to randomly generate references to unexisting objects.
 
 [0.1.9] - 2024-11-29
 --------------------
