@@ -42,6 +42,4 @@ As :class:`~scim2_client.engines.werkzeug.TestSCIMClient` relies on :doc:`Werkze
     def test_scim_tester():
         app = create_app(...)
         client = TestSCIMClient(app=app, scim_prefix="/scim/v2", resource_models=(User, Group))
-        results = check_server(client, raise_exceptions=True)
-        for result in results:
-            assert result.status == Status.SUCCESS
+        check_server(client, raise_exceptions=True)
