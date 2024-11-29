@@ -46,6 +46,7 @@ intersphinx_mapping = {
     "scim2_models": ("https://scim2-models.readthedocs.io/en/latest/", None),
     "scim2_client": ("https://scim2-client.readthedocs.io/en/latest/", None),
     "scim2_cli": ("https://scim2-cli.readthedocs.io/en/latest/", None),
+    "werkzeug": ("https://werkzeug.palletsprojects.com", None),
 }
 
 # -- Options for HTML output ----------------------------------------------
