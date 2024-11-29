@@ -17,5 +17,7 @@ def check_service_provider_config_endpoint(
 
         Check thet POST/PUT/PATCH/DELETE methods on the endpoint
     """
-    response = conf.client.query(ServiceProviderConfig)
+    response = conf.client.query(
+        ServiceProviderConfig, expected_status_codes=conf.expected_status_codes or [200]
+    )
     return CheckResult(conf, status=Status.SUCCESS, data=response)

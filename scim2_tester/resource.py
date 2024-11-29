@@ -92,7 +92,9 @@ def check_object_creation(
       fields of the request object
 
     """
-    response = conf.client.create(obj)
+    response = conf.client.create(
+        obj, expected_status_codes=conf.expected_status_codes or [201]
+    )
 
     return CheckResult(
         conf,
@@ -113,7 +115,9 @@ def check_object_query(
       fields of the request object
 
     """
-    response = conf.client.query(obj.__class__, obj.id)
+    response = conf.client.query(
+        obj.__class__, obj.id, expected_status_codes=conf.expected_status_codes or [200]
+    )
     return CheckResult(
         conf,
         status=Status.SUCCESS,
@@ -126,7 +130,7 @@ def check_object_query(
 def check_object_query_without_id(
     conf: CheckConfig, obj: Resource
 ) -> tuple[Resource, CheckResult]:
-    """Perform an object creation.
+    """Perform the query of all objects of one kind.
 
     Todo:
       - look for the object across several pages
@@ -134,7 +138,9 @@ def check_object_query_without_id(
       fields of the request object
 
     """
-    response = conf.client.query(obj.__class__)
+    response = conf.client.query(
+        obj.__class__, expected_status_codes=conf.expected_status_codes or [200]
+    )
     found = any(obj.id == resource.id for resource in response.resources)
     if not found:
         return CheckResult(
@@ -163,7 +169,9 @@ def check_object_replacement(
       fields of the request object
 
     """
-    response = conf.client.replace(obj)
+    response = conf.client.replace(
+        obj, expected_status_codes=conf.expected_status_codes or [200]
+    )
     return CheckResult(
         conf,
         status=Status.SUCCESS,
@@ -177,7 +185,9 @@ def check_object_deletion(
     conf: CheckConfig, obj: Resource
 ) -> tuple[Resource, CheckResult]:
     """Perform an object deletion."""
-    conf.client.delete(obj.__class__, obj.id)
+    conf.client.delete(
+        obj.__class__, obj.id, expected_status_codes=conf.expected_status_codes or [204]
+    )
     return CheckResult(
         conf,
         status=Status.SUCCESS,

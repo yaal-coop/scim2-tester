@@ -36,7 +36,7 @@ def test_bad_authentication(httpserver):
 
     client = Client(base_url=f"http://localhost:{httpserver.port}")
     scim = SyncSCIMClient(client, resource_models=(User, Group))
-    conf = CheckConfig(scim)
+    conf = CheckConfig(scim, expected_status_codes=[200, 401])
     result = check_schemas_endpoint(conf)
 
     assert result.status == Status.ERROR

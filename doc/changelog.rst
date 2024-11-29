@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Added
+^^^^^
+- Restrict expected status codes in checks.
+
+
 [0.1.9] - 2024-11-29
 --------------------
 

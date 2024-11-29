@@ -23,6 +23,9 @@ class CheckConfig:
     raise_exceptions: bool = False
     """Whether to raise exceptions or store them in a :class:`~scim2_tester.Result` object."""
 
+    expected_status_codes: list[int] | None = None
+    """The expected response status codes."""
+
 
 class SCIMTesterError(Exception):
     """Exception raised when a check failed and the `raise_exceptions` config parameter is :data:`True`."""

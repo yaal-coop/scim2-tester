@@ -19,7 +19,9 @@ def check_schemas_endpoint(conf: CheckConfig) -> tuple[Resource, CheckResult]:
         - Check that a 403 response is returned if a filter is passed
         - Check that the 'ResourceType', 'ServiceProviderConfig' and 'Schema' schemas are provided.
     """
-    response = conf.client.query(Schema)
+    response = conf.client.query(
+        Schema, expected_status_codes=conf.expected_status_codes or [200]
+    )
     available = ", ".join([f"'{resource.name}'" for resource in response.resources])
     return CheckResult(
         conf,

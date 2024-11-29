@@ -21,7 +21,9 @@ def check_resource_types_endpoint(
         - Check that a 403 response is returned if a filter is passed
         - Check that the `schema` attribute exists and is available.
     """
-    response = conf.client.query(ResourceType)
+    response = conf.client.query(
+        ResourceType, expected_status_codes=conf.expected_status_codes or [200]
+    )
     available = ", ".join([f"'{resource.name}'" for resource in response.resources])
     reason = f"Resource types available are: {available}"
     return CheckResult(
