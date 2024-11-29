@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[0.1.9] - Unreleased
+--------------------
+
+Added
+^^^^^
+- Added support for :class:`Extensions <scim2_models.Extension>`.
+
 [0.1.8] - 2024-11-29
 --------------------
 

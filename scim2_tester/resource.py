@@ -6,6 +6,8 @@ from typing import get_origin
 
 from pydantic import EmailStr
 from scim2_models import ComplexAttribute
+from scim2_models import EnterpriseUser
+from scim2_models import Extension
 from scim2_models import Group
 from scim2_models import Meta
 from scim2_models import Reference
@@ -20,9 +22,13 @@ from scim2_tester.utils import Status
 from scim2_tester.utils import checker
 
 
-def model_from_resource_type(resource_type: ResourceType):
+def model_from_resource_type(conf: CheckConfig, resource_type: ResourceType):
     if resource_type.id == "User":
-        return User
+        return (
+            User[EnterpriseUser]
+            if User[EnterpriseUser] in conf.client.resource_models
+            else User
+        )
 
     if resource_type.id == "Group":
         return Group
@@ -59,6 +65,10 @@ def fill_with_random_values(obj) -> Resource:
             value = field_type()
             fill_with_random_values(value)
 
+        elif isclass(field_type) and issubclass(field_type, Extension):
+            value = field_type()
+            fill_with_random_values(value)
+
         else:
             value = str(uuid.uuid4())
 
@@ -67,6 +77,7 @@ def fill_with_random_values(obj) -> Resource:
 
         else:
             setattr(obj, field_name, value)
+
     return obj
 
 
@@ -181,7 +192,7 @@ def check_resource_type(
 ) -> list[CheckResult]:
     results = []
 
-    model = model_from_resource_type(resource_type)
+    model = model_from_resource_type(conf, resource_type)
     obj = model()
     fill_with_random_values(obj)
 
