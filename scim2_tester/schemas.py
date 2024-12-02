@@ -1,4 +1,4 @@
-from scim2_models import Resource
+from scim2_models import Error
 from scim2_models import Schema
 
 from .utils import CheckConfig
@@ -7,8 +7,7 @@ from .utils import Status
 from .utils import checker
 
 
-@checker
-def check_schemas_endpoint(conf: CheckConfig) -> tuple[Resource, CheckResult]:
+def check_schemas_endpoint(conf: CheckConfig) -> list[CheckResult]:
     """As described in RFC7644 §4 <rfc7644#section-4>`, `/ResourceTypes` is a mandatory endpoint, and should only be accessible by GET.
 
     .. todo::
@@ -19,6 +18,18 @@ def check_schemas_endpoint(conf: CheckConfig) -> tuple[Resource, CheckResult]:
         - Check that a 403 response is returned if a filter is passed
         - Check that the 'ResourceType', 'ServiceProviderConfig' and 'Schema' schemas are provided.
     """
+    schemas_result = check_query_all_schemas(conf)
+    results = [schemas_result]
+
+    if schemas_result.status == Status.SUCCESS:
+        for resource_type in schemas_result.data:
+            results.append(check_query_schema_by_id(conf, resource_type))
+
+    return results
+
+
+@checker
+def check_query_all_schemas(conf: CheckConfig) -> CheckResult:
     response = conf.client.query(
         Schema, expected_status_codes=conf.expected_status_codes or [200]
     )
@@ -29,3 +40,19 @@ def check_schemas_endpoint(conf: CheckConfig) -> tuple[Resource, CheckResult]:
         reason=f"Schemas available are: {available}",
         data=response.resources,
     )
+
+
+@checker
+def check_query_schema_by_id(conf: CheckConfig, schema: Schema) -> CheckResult:
+    response = conf.client.query(
+        Schema,
+        schema.id,
+        expected_status_codes=conf.expected_status_codes or [200],
+    )
+    if isinstance(response, Error):
+        return CheckResult(
+            conf, status=Status.ERROR, reason=response.detail, data=response
+        )
+
+    reason = f"Successfully accessed the /Schemas/{schema.id} endpoint."
+    return CheckResult(conf, status=Status.SUCCESS, reason=reason, data=response)

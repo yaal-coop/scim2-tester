@@ -64,14 +64,14 @@ def check_server(client: SCIMClient, raise_exceptions=False) -> list[CheckResult
     conf.client.service_provider_config = result_spc.data
     results.append(result_spc)
 
-    result_resource_types = check_resource_types_endpoint(conf)
-    conf.client.resource_types = result_resource_types.data
-    results.append(result_resource_types)
+    results_resource_types = check_resource_types_endpoint(conf)
+    conf.client.resource_types = results_resource_types[0].data
+    results.extend(results_resource_types)
 
-    result_schemas = check_schemas_endpoint(conf)
-    results.append(result_schemas)
+    results_schemas = check_schemas_endpoint(conf)
+    results.extend(results_schemas)
     conf.client.resource_models = conf.client.build_resource_models(
-        conf.client.resource_types or [], result_schemas.data or []
+        conf.client.resource_types or [], results_schemas[0].data or []
     )
 
     if (

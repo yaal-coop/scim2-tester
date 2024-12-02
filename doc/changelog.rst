@@ -1,9 +1,13 @@
 Changelog
 =========
 
+[0.1.10] - Unreleased
+---------------------
+
 Added
 ^^^^^
 - Restrict expected status codes in checks.
+- Check individual :class:`~scim2_models.Schema` and :class:`~scim2_models.ResourceType` endpoints.
 
 Fixed
 ^^^^^

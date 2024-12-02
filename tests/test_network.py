@@ -37,11 +37,11 @@ def test_bad_authentication(httpserver):
     client = Client(base_url=f"http://localhost:{httpserver.port}")
     scim = SyncSCIMClient(client, resource_models=(User, Group))
     conf = CheckConfig(scim, expected_status_codes=[200, 401])
-    result = check_schemas_endpoint(conf)
+    results = check_schemas_endpoint(conf)
 
-    assert result.status == Status.ERROR
+    assert results[0].status == Status.ERROR
     assert (
-        result.reason
+        results[0].reason
         == "The server returned a SCIM Error object: Authentication is needed"
     )
 
