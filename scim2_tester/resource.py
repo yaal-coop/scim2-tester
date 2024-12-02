@@ -32,7 +32,7 @@ def model_from_resource_type(
     return None
 
 
-def fill_with_random_values(obj: type[Resource]) -> type[Resource]:
+def fill_with_random_values(obj: Resource) -> Resource:
     for field_name, field in obj.model_fields.items():
         if field.default:
             continue
@@ -55,6 +55,11 @@ def fill_with_random_values(obj: type[Resource]) -> type[Resource]:
                 ExternalReference,
                 URIReference,
             ):
+                if (
+                    obj.__class__.get_field_annotation(field_name, Required)
+                    == Required.true
+                ):
+                    return None
                 continue
 
             value = f"https://{str(uuid.uuid4())}.test"
@@ -67,12 +72,10 @@ def fill_with_random_values(obj: type[Resource]) -> type[Resource]:
             value = random.choice(list(field_type))
 
         elif isclass(field_type) and issubclass(field_type, ComplexAttribute):
-            value = field_type()
-            fill_with_random_values(value)
+            value = fill_with_random_values(field_type())
 
         elif isclass(field_type) and issubclass(field_type, Extension):
-            value = field_type()
-            fill_with_random_values(value)
+            value = fill_with_random_values(field_type())
 
         else:
             value = str(uuid.uuid4())
@@ -207,8 +210,7 @@ def check_resource_type(
         ]
 
     results = []
-    obj = model()
-    fill_with_random_values(obj)
+    obj = fill_with_random_values(model())
 
     result = check_object_creation(conf, obj)
     results.append(result)
