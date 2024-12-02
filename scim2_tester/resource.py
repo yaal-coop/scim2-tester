@@ -48,6 +48,9 @@ def fill_with_random_values(obj: Resource) -> Resource:
         if field_type is Meta:
             value = None
 
+        elif field.examples:
+            value = random.choice(field.examples)
+
         elif field_type is int:
             value = uuid.uuid4().int
 

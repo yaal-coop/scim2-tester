@@ -1,5 +1,6 @@
 from enum import Enum
 
+from pydantic import Field
 from scim2_models import ComplexAttribute
 from scim2_models import Reference
 from scim2_models import Resource
@@ -40,6 +41,9 @@ class CustomModel(Resource):
     complex_unique: Complex | None = None
     complex_multiple: list[Complex] | None = None
 
+    example_unique: str | None = Field(None, examples=["foo", "bar"])
+    example_multiple: list[str] | None = Field(None, examples=["foo", "bar"])
+
 
 def test_random_values():
     """Check that 'fill_with_random_values' produce valid objects."""
@@ -50,3 +54,6 @@ def test_random_values():
             continue
 
         assert getattr(obj, field_name) is not None
+
+    assert obj.example_unique in ["foo", "bar"]
+    assert all(val in ["foo", "bar"] for val in obj.example_multiple)
