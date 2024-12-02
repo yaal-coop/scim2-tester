@@ -147,7 +147,7 @@ def check_object_query_without_id(
         return CheckResult(
             conf,
             status=Status.ERROR,
-            reason=f"Could not find object {obj.__class__.__name__} with id : {response.detail}",
+            reason=f"Could not find object {obj.__class__.__name__} with id : {obj.id}",
             data=response,
         )
 
