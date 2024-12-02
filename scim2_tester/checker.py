@@ -49,10 +49,12 @@ def check_server(client: SCIMClient, raise_exceptions=False) -> list[CheckResult
 
     It starts by retrieving the standard :class:`~scim2_models.ServiceProviderConfig`,
     :class:`~scim2_models.Schema` and :class:`~scim2_models.ResourceType` endpoints.
+    Those configuration resources will be registered to the client if no other have been registered yet.
 
-    Then for all discovered resources, it perform a series of creation, query, replacement and deletion.
+    Then for all available resources (whether they have been manually configured in the client,
+    or dynamically discovered by the checker), it perform a series of creation, query, replacement and deletion.
 
-    :param scim: A SCIM client that will perform the requests.
+    :param client: A SCIM client that will perform the requests.
     :param raise_exceptions: Whether exceptions should be raised or stored in a :class:`~scim2_tester.CheckResult` object.
     """
     conf = CheckConfig(client, raise_exceptions)
@@ -60,18 +62,21 @@ def check_server(client: SCIMClient, raise_exceptions=False) -> list[CheckResult
 
     # Get the initial basic objects
     result_spc = check_service_provider_config_endpoint(conf)
-    conf.client.service_provider_config = result_spc.data
     results.append(result_spc)
+    if not conf.client.service_provider_config:
+        conf.client.service_provider_config = result_spc.data
 
     results_resource_types = check_resource_types_endpoint(conf)
-    conf.client.resource_types = results_resource_types[0].data
     results.extend(results_resource_types)
+    if not conf.client.resource_types:
+        conf.client.resource_types = results_resource_types[0].data
 
     results_schemas = check_schemas_endpoint(conf)
     results.extend(results_schemas)
-    conf.client.resource_models = conf.client.build_resource_models(
-        conf.client.resource_types or [], results_schemas[0].data or []
-    )
+    if not conf.client.resource_models:
+        conf.client.resource_models = conf.client.build_resource_models(
+            conf.client.resource_types or [], results_schemas[0].data or []
+        )
 
     if (
         not conf.client.service_provider_config
