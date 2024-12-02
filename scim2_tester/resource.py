@@ -2,6 +2,7 @@ import random
 import uuid
 from enum import Enum
 from inspect import isclass
+from typing import Any
 from typing import get_args
 from typing import get_origin
 
@@ -28,11 +29,10 @@ def model_from_resource_type(
         if resource_model.model_fields["schemas"].default[0] == resource_type.schema_:
             return resource_model
 
-    breakpoint()
     return None
 
 
-def fill_with_random_values(obj) -> Resource:
+def fill_with_random_values(obj: type[Resource]) -> type[Resource]:
     for field_name, field in obj.model_fields.items():
         if field.default:
             continue
@@ -40,6 +40,7 @@ def fill_with_random_values(obj) -> Resource:
         field_type = obj.get_field_root_type(field_name)
         is_multiple = obj.get_field_multiplicity(field_name)
 
+        value: Any
         if field_type is Meta:
             value = None
 
@@ -86,9 +87,7 @@ def fill_with_random_values(obj) -> Resource:
 
 
 @checker
-def check_object_creation(
-    conf: CheckConfig, obj: Resource
-) -> tuple[Resource, CheckResult]:
+def check_object_creation(conf: CheckConfig, obj: type[Resource]) -> CheckResult:
     """Perform an object creation.
 
     Todo:
@@ -109,9 +108,7 @@ def check_object_creation(
 
 
 @checker
-def check_object_query(
-    conf: CheckConfig, obj: Resource
-) -> tuple[Resource, CheckResult]:
+def check_object_query(conf: CheckConfig, obj: type[Resource]) -> CheckResult:
     """Perform an object query by knowing its id.
 
     Todo:
@@ -132,8 +129,8 @@ def check_object_query(
 
 @checker
 def check_object_query_without_id(
-    conf: CheckConfig, obj: Resource
-) -> tuple[Resource, CheckResult]:
+    conf: CheckConfig, obj: type[Resource]
+) -> CheckResult:
     """Perform the query of all objects of one kind.
 
     Todo:
@@ -163,9 +160,7 @@ def check_object_query_without_id(
 
 
 @checker
-def check_object_replacement(
-    conf: CheckConfig, obj: Resource
-) -> tuple[Resource, CheckResult]:
+def check_object_replacement(conf: CheckConfig, obj: type[Resource]) -> CheckResult:
     """Perform an object replacement.
 
     Todo:
@@ -185,9 +180,7 @@ def check_object_replacement(
 
 
 @checker
-def check_object_deletion(
-    conf: CheckConfig, obj: Resource
-) -> tuple[Resource, CheckResult]:
+def check_object_deletion(conf: CheckConfig, obj: type[Resource]) -> CheckResult:
     """Perform an object deletion."""
     conf.client.delete(
         obj.__class__, obj.id, expected_status_codes=conf.expected_status_codes or [204]
@@ -203,9 +196,17 @@ def check_resource_type(
     conf: CheckConfig,
     resource_type: ResourceType,
 ) -> list[CheckResult]:
-    results = []
-
     model = model_from_resource_type(conf, resource_type)
+    if not model:
+        return [
+            CheckResult(
+                conf,
+                status=Status.ERROR,
+                reason=f"No Schema matching the ResourceType {resource_type.id}",
+            )
+        ]
+
+    results = []
     obj = model()
     fill_with_random_values(obj)
 

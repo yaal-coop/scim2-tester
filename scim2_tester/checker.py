@@ -3,7 +3,6 @@ import uuid
 
 from scim2_client import SCIMClient
 from scim2_models import Error
-from scim2_models import Resource
 
 from scim2_tester.resource import check_resource_type
 from scim2_tester.resource_types import check_resource_types_endpoint
@@ -16,7 +15,7 @@ from scim2_tester.utils import checker
 
 
 @checker
-def check_random_url(conf: CheckConfig) -> tuple[Resource, CheckResult]:
+def check_random_url(conf: CheckConfig) -> CheckResult:
     """Check that a request to a random URL returns a 404 Error object."""
     probably_invalid_url = f"/{str(uuid.uuid4())}"
     response = conf.client.query(url=probably_invalid_url, raise_scim_errors=False)
