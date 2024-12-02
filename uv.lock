@@ -854,14 +854,14 @@ wheels = [
 
 [[package]]
 name = "scim2-client"
-version = "0.4.0"
+version = "0.4.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "scim2-models" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7d/a6/bc73a4fb045807d39c96fff6fe9e39e1cff2adc15c65950dd3df55d6bf35/scim2_client-0.4.0.tar.gz", hash = "sha256:d813fca4314a55d1e28f0fc11eb0b63bb3ef89275c5ff35b0c6e71389d6a1062", size = 85087 }
+sdist = { url = "https://files.pythonhosted.org/packages/b3/75/fa3a7ca6badf8905f6768ab966665d1f9c2e34519aed73cc298b52aaf122/scim2_client-0.4.1.tar.gz", hash = "sha256:b8e4898a534a20ee96784e69e91c04bbff3900042ad2b6ff6e8519a9bf81cdc0", size = 85135 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/41/fd/c511c25bb018fb77d24082c574ad8f77d38aa114484a7a7a9a7efda378d9/scim2_client-0.4.0-py3-none-any.whl", hash = "sha256:1aa0fe86b00c769c2a051ba314e8af8302e47bbac2b44f3b7dc05a48890f7dca", size = 22123 },
+    { url = "https://files.pythonhosted.org/packages/b6/bf/9f2b8cc05d7f5e7c59010fa731799f8b8dae81cb904aec8f1f4a296b1b6c/scim2_client-0.4.1-py3-none-any.whl", hash = "sha256:960bb21db1aac60f01ae60634bf51de750c9a068409b90d9b58291feb6d5516f", size = 22145 },
 ]
 
 [package.optional-dependencies]
