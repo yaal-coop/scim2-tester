@@ -1,6 +1,7 @@
 import re
 
 from scim2_models import Context
+from scim2_models import Error
 from scim2_models import ListResponse
 from scim2_models import ResourceType
 
@@ -26,6 +27,11 @@ def test_resource_types_endpoint(httpserver, check_config):
             status=200,
             content_type="application/scim+json",
         )
+    httpserver.expect_request(re.compile(r"^/ResourceTypes/.*$")).respond_with_json(
+        Error(status=404, detail="ResourceType Not Found").model_dump(),
+        status=404,
+        content_type="application/scim+json",
+    )
 
     results = check_resource_types_endpoint(check_config)
 

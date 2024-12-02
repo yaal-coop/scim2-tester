@@ -8,6 +8,7 @@ Added
 ^^^^^
 - Restrict expected status codes in checks.
 - Check individual :class:`~scim2_models.Schema` and :class:`~scim2_models.ResourceType` endpoints.
+- Check for :class:`~scim2_models.Schema` and :class:`~scim2_models.ResourceType` with invalid ids.
 
 Fixed
 ^^^^^

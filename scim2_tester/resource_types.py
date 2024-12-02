@@ -1,3 +1,5 @@
+import uuid
+
 from scim2_models import Error
 from scim2_models import ResourceType
 
@@ -24,6 +26,8 @@ def check_resource_types_endpoint(conf: CheckConfig) -> list[CheckResult]:
     if resource_types_result.status == Status.SUCCESS:
         for resource_type in resource_types_result.data:
             results.append(check_query_resource_type_by_id(conf, resource_type))
+
+    results.append(check_access_invalid_resource_type(conf))
 
     return results
 
@@ -56,3 +60,37 @@ def check_query_resource_type_by_id(
 
     reason = f"Successfully accessed the /ResourceTypes/{resource_type.id} endpoint."
     return CheckResult(conf, status=Status.SUCCESS, reason=reason, data=response)
+
+
+@checker
+def check_access_invalid_resource_type(conf: CheckConfig) -> CheckResult:
+    probably_invalid_id = str(uuid.uuid4())
+    response = conf.client.query(
+        ResourceType,
+        probably_invalid_id,
+        expected_status_codes=conf.expected_status_codes or [404],
+        raise_scim_errors=False,
+    )
+
+    if not isinstance(response, Error):
+        return CheckResult(
+            conf,
+            status=Status.ERROR,
+            reason=f"/resource_types/{probably_invalid_id} invalid URL did not return an Error object",
+            data=response,
+        )
+
+    if response.status != 404:
+        return CheckResult(
+            conf,
+            status=Status.ERROR,
+            reason=f"/resource_types/{probably_invalid_id} invalid URL did return an object, but the status code is {response.status}",
+            data=response,
+        )
+
+    return CheckResult(
+        conf,
+        status=Status.SUCCESS,
+        reason=f"/resource_types/{probably_invalid_id} invalid URL correctly returned a 404 error",
+        data=response,
+    )

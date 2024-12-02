@@ -1,3 +1,5 @@
+import uuid
+
 from scim2_models import Error
 from scim2_models import Schema
 
@@ -24,6 +26,8 @@ def check_schemas_endpoint(conf: CheckConfig) -> list[CheckResult]:
     if schemas_result.status == Status.SUCCESS:
         for resource_type in schemas_result.data:
             results.append(check_query_schema_by_id(conf, resource_type))
+
+    results.append(check_access_invalid_schema(conf))
 
     return results
 
@@ -56,3 +60,37 @@ def check_query_schema_by_id(conf: CheckConfig, schema: Schema) -> CheckResult:
 
     reason = f"Successfully accessed the /Schemas/{schema.id} endpoint."
     return CheckResult(conf, status=Status.SUCCESS, reason=reason, data=response)
+
+
+@checker
+def check_access_invalid_schema(conf: CheckConfig) -> CheckResult:
+    probably_invalid_id = str(uuid.uuid4())
+    response = conf.client.query(
+        Schema,
+        probably_invalid_id,
+        expected_status_codes=conf.expected_status_codes or [404],
+        raise_scim_errors=False,
+    )
+
+    if not isinstance(response, Error):
+        return CheckResult(
+            conf,
+            status=Status.ERROR,
+            reason=f"/Schemas/{probably_invalid_id} invalid URL did not return an Error object",
+            data=response,
+        )
+
+    if response.status != 404:
+        return CheckResult(
+            conf,
+            status=Status.ERROR,
+            reason=f"/Schemas/{probably_invalid_id} invalid URL did return an object, but the status code is {response.status}",
+            data=response,
+        )
+
+    return CheckResult(
+        conf,
+        status=Status.SUCCESS,
+        reason=f"/Schemas/{probably_invalid_id} invalid URL correctly returned a 404 error",
+        data=response,
+    )

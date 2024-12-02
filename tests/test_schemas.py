@@ -1,6 +1,7 @@
 import re
 
 from scim2_models import Context
+from scim2_models import Error
 from scim2_models import ListResponse
 from scim2_models import Schema
 
@@ -8,8 +9,8 @@ from scim2_tester.schemas import check_schemas_endpoint
 from scim2_tester.utils import Status
 
 
-def test_schemas_endpoint(httpserver, check_config):
-    """Test a fully functional resource types endpoint."""
+def test_shemas_endpoint(httpserver, check_config):
+    """Test a fully functional schemas endpoint."""
     schemas = [model.to_schema() for model in check_config.client.resource_models]
     httpserver.expect_request(re.compile(r"^/Schemas$")).respond_with_json(
         ListResponse[Schema](
@@ -27,13 +28,18 @@ def test_schemas_endpoint(httpserver, check_config):
             status=200,
             content_type="application/scim+json",
         )
+    httpserver.expect_request(re.compile(r"^/Schemas/.*$")).respond_with_json(
+        Error(status=404, detail="Schema Not Found").model_dump(),
+        status=404,
+        content_type="application/scim+json",
+    )
 
     results = check_schemas_endpoint(check_config)
 
     assert all(result.status == Status.SUCCESS for result in results)
 
 
-def test_resource_missing_query_endpoint(httpserver, check_config):
+def test_missing_query_endpoint(httpserver, check_config):
     """Test that individual Schema endpoints are missing."""
     schemas = [model.to_schema() for model in check_config.client.resource_models]
     httpserver.expect_request(re.compile(r"^/Schemas$")).respond_with_json(
