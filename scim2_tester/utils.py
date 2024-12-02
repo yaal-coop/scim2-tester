@@ -57,7 +57,7 @@ class CheckResult:
 
     def __post_init__(self):
         if self.conf.raise_exceptions and self.status == Status.ERROR:
-            raise SCIMTesterError(self.title, self)
+            raise SCIMTesterError(self.reason, self)
 
 
 def checker(func):
