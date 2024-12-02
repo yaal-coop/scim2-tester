@@ -4,7 +4,7 @@ from enum import Enum
 from enum import auto
 from typing import Any
 
-from scim2_client import BaseSCIMClient
+from scim2_client import SCIMClient
 from scim2_client import SCIMClientError
 
 
@@ -17,7 +17,7 @@ class Status(Enum):
 class CheckConfig:
     """Object used to configure the checks behavior."""
 
-    client: BaseSCIMClient
+    client: SCIMClient
     """The SCIM client that will be used to perform the requests."""
 
     raise_exceptions: bool = False

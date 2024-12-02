@@ -1,16 +1,11 @@
 import pytest
 from scim2_client.engines.werkzeug import TestSCIMClient
-from scim2_models import EnterpriseUser
-from scim2_models import Group
-from scim2_models import User
 from scim2_server.backend import InMemoryBackend
 from scim2_server.provider import SCIMProvider
 from scim2_server.utils import load_default_resource_types
 from scim2_server.utils import load_default_schemas
 
 from scim2_tester import check_server
-
-TestSCIMClient.__test__ = False
 
 
 @pytest.fixture
@@ -27,6 +22,12 @@ def scim2_server():
     return app
 
 
-def test_scim2_server(scim2_server):
-    scim = TestSCIMClient(scim2_server, resource_models=(User[EnterpriseUser], Group))
-    check_server(scim, raise_exceptions=True)
+def test_discovered_scim2_server(scim2_server):
+    client = TestSCIMClient(scim2_server)
+    client.discover()
+    check_server(client, raise_exceptions=True)
+
+
+def test_undiscovered_scim2_server(scim2_server):
+    client = TestSCIMClient(scim2_server)
+    check_server(client, raise_exceptions=True)

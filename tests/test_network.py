@@ -17,7 +17,7 @@ from scim2_tester.utils import Status
 def test_unreachable_host():
     """Test reaching a invalid URL."""
     client = Client(base_url="https://invalid.test")
-    scim = SyncSCIMClient(client, resource_models=(User, Group))
+    scim = SyncSCIMClient(client)
     results = check_server(scim)
 
     assert all(result.status == Status.ERROR for result in results)
@@ -72,6 +72,7 @@ def test_bad_content_type(httpserver):
 
     client = Client(base_url=f"http://localhost:{httpserver.port}")
     scim = SyncSCIMClient(client, resource_models=(User, Group))
+    scim.register_naive_resource_types()
     conf = CheckConfig(scim)
 
     result = check_object_query(conf, scim_user)
