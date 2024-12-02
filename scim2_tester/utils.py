@@ -35,6 +35,9 @@ class SCIMTesterError(Exception):
         self.message = message
         self.conf = conf
 
+    def __str__(self):
+        return self.message
+
 
 @dataclass
 class CheckResult:
