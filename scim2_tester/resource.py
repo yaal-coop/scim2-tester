@@ -11,7 +11,9 @@ from scim2_models import ComplexAttribute
 from scim2_models import Extension
 from scim2_models import ExternalReference
 from scim2_models import Meta
+from scim2_models import Mutability
 from scim2_models import Reference
+from scim2_models import Required
 from scim2_models import Resource
 from scim2_models import ResourceType
 from scim2_models import URIReference
@@ -93,7 +95,7 @@ def fill_with_random_values(obj: Resource) -> Resource:
 def check_object_creation(conf: CheckConfig, obj: type[Resource]) -> CheckResult:
     """Perform an object creation.
 
-    Todo:
+    .. todo::
       - check if the fields of the result object are the same than the
       fields of the request object
 
@@ -114,7 +116,7 @@ def check_object_creation(conf: CheckConfig, obj: type[Resource]) -> CheckResult
 def check_object_query(conf: CheckConfig, obj: type[Resource]) -> CheckResult:
     """Perform an object query by knowing its id.
 
-    Todo:
+    .. todo::
       - check if the fields of the result object are the same than the
       fields of the request object
 
@@ -136,7 +138,7 @@ def check_object_query_without_id(
 ) -> CheckResult:
     """Perform the query of all objects of one kind.
 
-    Todo:
+    .. todo::
       - look for the object across several pages
       - check if the fields of the result object are the same than the
       fields of the request object
@@ -166,7 +168,7 @@ def check_object_query_without_id(
 def check_object_replacement(conf: CheckConfig, obj: type[Resource]) -> CheckResult:
     """Perform an object replacement.
 
-    Todo:
+    .. todo::
       - check if the fields of the result object are the same than the
       fields of the request object
 
@@ -178,6 +180,54 @@ def check_object_replacement(conf: CheckConfig, obj: type[Resource]) -> CheckRes
         conf,
         status=Status.SUCCESS,
         reason=f"Successful replacement of a {obj.__class__.__name__} object with id {response.id}",
+        data=response,
+    )
+
+
+@checker
+def check_object_reset(conf: CheckConfig, obj: type[Resource]) -> CheckResult:
+    """Perform an object reset.
+
+    All the editable fields of the object take a null value.
+
+    .. todo::
+      - check if the fields of the result object are the same than the
+      fields of the request object
+
+    """
+    nullable_attributes = [
+        field_name
+        for field_name, field in obj.model_fields.items()
+        if (
+            obj.get_field_annotation(field_name, Mutability)
+            in (Mutability.read_write, Mutability.write_only)
+            and obj.get_field_annotation(field_name, Required) == Required.false
+        )
+    ]
+    for attribute_name in nullable_attributes:
+        setattr(obj, attribute_name, None)
+
+    response = conf.client.replace(
+        obj, expected_status_codes=conf.expected_status_codes or [200]
+    )
+
+    non_nulled = [
+        field_name
+        for field_name in nullable_attributes
+        if getattr(response, field_name) is not None
+    ]
+    if non_nulled:
+        return CheckResult(
+            conf,
+            status=Status.ERROR,
+            reason=f"Some attributes of {obj.__class__.__name__} could not be reset: {non_nulled}",
+            data=response,
+        )
+
+    return CheckResult(
+        conf,
+        status=Status.SUCCESS,
+        reason=f"Successful reset of the editable attributes of {obj.__class__.__name__}",
         data=response,
     )
 
@@ -226,6 +276,9 @@ def check_resource_type(
 
         fill_with_random_values(queried_obj)
         result = check_object_replacement(conf, created_obj)
+        results.append(result)
+
+        result = check_object_reset(conf, created_obj)
         results.append(result)
 
         result = check_object_deletion(conf, created_obj)
