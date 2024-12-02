@@ -1,17 +1,19 @@
+import base64
 import random
 import uuid
 from enum import Enum
 from inspect import isclass
+from typing import Annotated
 from typing import Any
 from typing import get_args
 from typing import get_origin
 
-from pydantic import EmailStr
 from scim2_models import ComplexAttribute
 from scim2_models import Extension
 from scim2_models import ExternalReference
 from scim2_models import Meta
 from scim2_models import Reference
+from scim2_models import Required
 from scim2_models import Resource
 from scim2_models import ResourceType
 from scim2_models import URIReference
@@ -37,8 +39,10 @@ def fill_with_random_values(obj: Resource) -> Resource:
         if field.default:
             continue
 
-        field_type = obj.get_field_root_type(field_name)
         is_multiple = obj.get_field_multiplicity(field_name)
+        field_type = obj.get_field_root_type(field_name)
+        if get_origin(field_type) == Annotated:
+            field_type = get_args(field_type)[0]
 
         value: Any
         if field_type is Meta:
@@ -49,6 +53,9 @@ def fill_with_random_values(obj: Resource) -> Resource:
 
         elif field_type is bool:
             value = random.choice([True, False])
+
+        elif field_type is bytes:
+            value = base64.b64encode(str(uuid.uuid4()).encode("utf-8"))
 
         elif get_origin(field_type) is Reference:
             if get_args(field_type)[0] not in (
@@ -64,10 +71,6 @@ def fill_with_random_values(obj: Resource) -> Resource:
 
             value = f"https://{str(uuid.uuid4())}.test"
 
-        elif field_type is EmailStr:
-            # pydantic won't allow to use the 'test' TLD here
-            value = f"{uuid.uuid4()}@{uuid.uuid4()}.com"
-
         elif isclass(field_type) and issubclass(field_type, Enum):
             value = random.choice(list(field_type))
 
@@ -78,7 +81,8 @@ def fill_with_random_values(obj: Resource) -> Resource:
             value = fill_with_random_values(field_type())
 
         else:
-            value = str(uuid.uuid4())
+            # Put emails so this will be accepted by EmailStr too
+            value = f"{uuid.uuid4()}@{uuid.uuid4()}.com"
 
         if is_multiple:
             setattr(obj, field_name, [value])
