@@ -77,8 +77,10 @@ def checker(func):
         except SCIMClientError as exc:
             if conf.raise_exceptions:
                 raise
+
+            reason = f"{exc} {exc.__cause__}" if exc.__cause__ else str(exc)
             result = CheckResult(
-                conf, status=Status.ERROR, reason=str(exc), data=exc.source
+                conf, status=Status.ERROR, reason=reason, data=exc.source
             )
 
         # decorate results

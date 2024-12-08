@@ -22,7 +22,7 @@ def test_unreachable_host():
 
     assert all(result.status == Status.ERROR for result in results)
     assert all(
-        result.reason == "Network error happened during request" for result in results
+        "Network error happened during request" in result.reason for result in results
     )
 
 

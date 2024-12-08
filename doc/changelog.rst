@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[0.1.11] - Unreleased
+---------------------
+
+Added
+^^^^^
+- Slightly improved error messages.
+
 [0.1.10] - 2024-12-02
 ---------------------
 
