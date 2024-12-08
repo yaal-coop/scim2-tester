@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[0.1.12] - Unreleased
+---------------------
+
+Fixed
+^^^^^
+- Resource replacement test was not using new values.
+
 [0.1.11] - 2024-12-08
 ---------------------
 

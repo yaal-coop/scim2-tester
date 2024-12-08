@@ -12,6 +12,7 @@ from scim2_models import ComplexAttribute
 from scim2_models import Extension
 from scim2_models import ExternalReference
 from scim2_models import Meta
+from scim2_models import Mutability
 from scim2_models import Reference
 from scim2_models import Required
 from scim2_models import Resource
@@ -258,7 +259,13 @@ def check_resource_type(
 
     results = []
     garbages = []
-    obj, obj_garbages = fill_with_random_values(conf, model())
+    field_names = [
+        field_name
+        for field_name in model.model_fields.keys()
+        if model.get_field_annotation(field_name, Mutability)
+        in (Mutability.read_write, Mutability.write_only, Mutability.immutable)
+    ]
+    obj, obj_garbages = fill_with_random_values(conf, model(), field_names)
     garbages += obj_garbages
 
     result = check_object_creation(conf, obj)
@@ -267,13 +274,18 @@ def check_resource_type(
     if result.status == Status.SUCCESS:
         created_obj = result.data
         result = check_object_query(conf, created_obj)
-        queried_obj = result.data
         results.append(result)
 
         result = check_object_query_without_id(conf, created_obj)
         results.append(result)
 
-        _, obj_garbages = fill_with_random_values(conf, queried_obj)
+        field_names = [
+            field_name
+            for field_name in model.model_fields.keys()
+            if model.get_field_annotation(field_name, Mutability)
+            in (Mutability.read_write, Mutability.write_only)
+        ]
+        _, obj_garbages = fill_with_random_values(conf, created_obj, field_names)
         garbages += obj_garbages
         result = check_object_replacement(conf, created_obj)
         results.append(result)
