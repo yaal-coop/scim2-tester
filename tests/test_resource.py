@@ -48,7 +48,7 @@ class CustomModel(Resource):
 def test_random_values():
     """Check that 'fill_with_random_values' produce valid objects."""
     obj = CustomModel()
-    fill_with_random_values(obj)
+    fill_with_random_values(None, obj)
     for field_name in obj.model_fields:
         if field_name == "meta":
             continue

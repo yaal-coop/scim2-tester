@@ -17,6 +17,7 @@ from scim2_models import Required
 from scim2_models import Resource
 from scim2_models import ResourceType
 from scim2_models import URIReference
+from scim2_models.utils import UNION_TYPES
 
 from scim2_tester.utils import CheckConfig
 from scim2_tester.utils import CheckResult
@@ -34,8 +35,46 @@ def model_from_resource_type(
     return None
 
 
-def fill_with_random_values(obj: Resource) -> Resource:
-    for field_name, field in obj.model_fields.items():
+def create_minimal_object(
+    conf: CheckConfig, model: type[Resource]
+) -> tuple[Resource, list[Resource]]:
+    """Create an object filling with the minimum required field set."""
+    field_names = [
+        field_name
+        for field_name in model.model_fields.keys()
+        if model.get_field_annotation(field_name, Required) == Required.true
+    ]
+    obj, garbages = fill_with_random_values(conf, model(), field_names)
+    obj = conf.client.create(obj)
+    return obj, garbages
+
+
+def model_from_ref_type(
+    conf: CheckConfig, ref_type: type, different_than: Resource
+) -> type[Resource]:
+    def model_from_ref_type_(ref_type):
+        if get_origin(ref_type) in UNION_TYPES:
+            return [
+                model_from_ref_type_(sub_ref_type)
+                for sub_ref_type in get_args(ref_type)
+            ]
+
+        model_name = get_args(ref_type)[0]
+        model = conf.client.get_resource_model(model_name)
+        return model
+
+    models = model_from_ref_type_(ref_type)
+    models = models if isinstance(models, list) else [models]
+    acceptable_models = [model for model in models if model != different_than]
+    return acceptable_models[0]
+
+
+def fill_with_random_values(
+    conf: CheckConfig, obj: Resource, field_names: list[str] | None = None
+) -> Resource:
+    garbages = []
+    for field_name in field_names or obj.model_fields.keys():
+        field = obj.model_fields[field_name]
         if field.default:
             continue
 
@@ -61,27 +100,28 @@ def fill_with_random_values(obj: Resource) -> Resource:
             value = base64.b64encode(str(uuid.uuid4()).encode("utf-8"))
 
         elif get_origin(field_type) is Reference:
-            if get_args(field_type)[0] not in (
-                ExternalReference,
-                URIReference,
-            ):
-                if (
-                    obj.__class__.get_field_annotation(field_name, Required)
-                    == Required.true
-                ):
-                    return None
-                continue
+            ref_type = get_args(field_type)[0]
+            if ref_type not in (ExternalReference, URIReference):
+                model = model_from_ref_type(
+                    conf, ref_type, different_than=obj.__class__
+                )
+                ref_obj, sub_garbages = create_minimal_object(conf, model)
+                value = ref_obj.meta.location
+                garbages += sub_garbages
 
-            value = f"https://{str(uuid.uuid4())}.test"
+            else:
+                value = f"https://{str(uuid.uuid4())}.test"
 
         elif isclass(field_type) and issubclass(field_type, Enum):
             value = random.choice(list(field_type))
 
         elif isclass(field_type) and issubclass(field_type, ComplexAttribute):
-            value = fill_with_random_values(field_type())
+            value, sub_garbages = fill_with_random_values(conf, field_type())
+            garbages += sub_garbages
 
         elif isclass(field_type) and issubclass(field_type, Extension):
-            value = fill_with_random_values(field_type())
+            value, sub_garbages = fill_with_random_values(conf, field_type())
+            garbages += sub_garbages
 
         else:
             # Put emails so this will be accepted by EmailStr too
@@ -93,7 +133,7 @@ def fill_with_random_values(obj: Resource) -> Resource:
         else:
             setattr(obj, field_name, value)
 
-    return obj
+    return obj, garbages
 
 
 @checker
@@ -217,7 +257,9 @@ def check_resource_type(
         ]
 
     results = []
-    obj = fill_with_random_values(model())
+    garbages = []
+    obj, obj_garbages = fill_with_random_values(conf, model())
+    garbages += obj_garbages
 
     result = check_object_creation(conf, obj)
     results.append(result)
@@ -231,11 +273,15 @@ def check_resource_type(
         result = check_object_query_without_id(conf, created_obj)
         results.append(result)
 
-        fill_with_random_values(queried_obj)
+        _, obj_garbages = fill_with_random_values(conf, queried_obj)
+        garbages += obj_garbages
         result = check_object_replacement(conf, created_obj)
         results.append(result)
 
         result = check_object_deletion(conf, created_obj)
         results.append(result)
+
+    for garbage in reversed(garbages):
+        conf.client.delete(garbage)
 
     return results

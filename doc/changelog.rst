@@ -7,6 +7,7 @@ Changelog
 Added
 ^^^^^
 - Slightly improved error messages.
+- Create temporary resources to test references.
 
 [0.1.10] - 2024-12-02
 ---------------------
