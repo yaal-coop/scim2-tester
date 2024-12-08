@@ -37,9 +37,10 @@ As :class:`~scim2_client.engines.werkzeug.TestSCIMClient` relies on :doc:`Werkze
     from scim2_models import User, Group
     from scim2_client.engines.werkzeug import TestSCIMClient
     from scim2_tester import check_server, Status
+    from werkzeug.test import Client
     from myapp import create_app
 
     def test_scim_tester():
         app = create_app(...)
-        client = TestSCIMClient(app=app, scim_prefix="/scim/v2", resource_models=(User, Group))
+        client = TestSCIMClient(app=Clien(app), scim_prefix="/scim/v2")
         check_server(client, raise_exceptions=True)
