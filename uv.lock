@@ -897,14 +897,14 @@ wheels = [
 
 [[package]]
 name = "scim2-client"
-version = "0.5.0"
+version = "0.5.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "scim2-models" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4f/d0/06a2a68c8b6a840fd8020ebfaf0141e1eadff0a24b4a2ba87c1d0fb9607d/scim2_client-0.5.0.tar.gz", hash = "sha256:f485864c0148cbbddd6a4120a4b3c2553ca89a8076d5cf7bdfa8ad6aba2c1e6e", size = 85783 }
+sdist = { url = "https://files.pythonhosted.org/packages/60/a0/208fb622495b174cfa11f9e856c19db73f2bbf3859519704cd35ff39dfce/scim2_client-0.5.1.tar.gz", hash = "sha256:836451f91baf8f0f3c7061dcc043e892d4e607c55c5803e779adc112b4bc2722", size = 85832 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4b/e3/195d64ace80effcb948773914b72a8705565afbd02471ac827b28dfa977a/scim2_client-0.5.0-py3-none-any.whl", hash = "sha256:9f290aafea88d4220372a4902a17b3e7ea4dbdae69dfe9489b938d8d7a7ac827", size = 22500 },
+    { url = "https://files.pythonhosted.org/packages/c8/9f/66b3c5a61b156856f1019538757063a96e9cdd11b9d4f812505148c66d29/scim2_client-0.5.1-py3-none-any.whl", hash = "sha256:bf5566da5704228d24eebc89cd8a2adb038b19099956996d1e450a1d40df2d14", size = 22507 },
 ]
 
 [package.optional-dependencies]
@@ -926,14 +926,14 @@ wheels = [
 
 [[package]]
 name = "scim2-models"
-version = "0.2.10"
+version = "0.2.11"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pydantic", extra = ["email"] },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d6/ab/30c537635c2f4591db3a74acc90d8bd5a87107a01645f6c5a64c9f9e7619/scim2_models-0.2.10.tar.gz", hash = "sha256:1cbdaab551ec9fd06b3eaf4d1540f7c60cf065fdd6932ee5493e109d33163e2f", size = 131248 }
+sdist = { url = "https://files.pythonhosted.org/packages/92/2d/c99f2e86f52f606f5044cd4bf8cb37e1164c593411cc5e1fd548485a643f/scim2_models-0.2.11.tar.gz", hash = "sha256:1000ee6d440ebf5f6e3677f50a304720a77aa39d82dabf27321c5c5b4d97846f", size = 131554 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/97/8c/ec957904e8e2d3f8cfa83c65f144aaa72527a816a485881eb7d5fb75968c/scim2_models-0.2.10-py3-none-any.whl", hash = "sha256:a8576a6c7a87bcfce9c5851f58ea1361ccbb6c53452cc96e70a2dda571cedcea", size = 39925 },
+    { url = "https://files.pythonhosted.org/packages/0a/b2/f6571235f1926f1b1f974b8fcfe5ecdb4980e9750de63a1d95aa06aca392/scim2_models-0.2.11-py3-none-any.whl", hash = "sha256:3d5bb13e445211281635b9fb4203a1cc4cb56b83ddcb659200884051eea72e78", size = 40082 },
 ]
 
 [[package]]
