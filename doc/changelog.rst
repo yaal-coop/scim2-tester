@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[0.1.13] - 2024-12-11
+---------------------
+
+Fixed
+^^^^^
+- Generate valid emails and phone numbers when filling objects attributes.
+
 [0.1.12] - 2024-12-08
 ---------------------
 
