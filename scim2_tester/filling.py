@@ -79,6 +79,22 @@ def fill_with_random_values(
         elif field.examples:
             value = random.choice(field.examples)
 
+        # RFC7643 §4.1.2 provides the following indications, however
+        # there is no way to guess the existence of such requirements
+        # just by looking at the object schema.
+        #     The value SHOULD be specified according to [RFC5321].
+        elif field_name == "value" and "email" in obj.__class__.__name__.lower():
+            value = f"{uuid.uuid4()}@{uuid.uuid4()}.com"
+
+        # RFC7643 §4.1.2 provides the following indications, however
+        # there is no way to guess the existence of such requirements
+        # just by looking at the object schema.
+        #     The value SHOULD be specified
+        #     according to the format defined in [RFC3966], e.g.,
+        #     'tel:+1-201-555-0123'.
+        elif field_name == "value" and "phone" in obj.__class__.__name__.lower():
+            value = "".join(str(random.choice(range(10))) for _ in range(10))
+
         elif field_type is int:
             value = uuid.uuid4().int
 
@@ -114,7 +130,7 @@ def fill_with_random_values(
 
         else:
             # Put emails so this will be accepted by EmailStr too
-            value = f"{uuid.uuid4()}@{uuid.uuid4()}.com"
+            value = str(uuid.uuid4())
 
         if is_multiple:
             setattr(obj, field_name, [value])
